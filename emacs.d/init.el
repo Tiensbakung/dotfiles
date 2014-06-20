@@ -143,7 +143,7 @@
 (require 'auto-complete-config)
 (require 'ispell)
 (add-to-list 'ac-sources 'ac-source-ispell)
-(add-to-list 'ac-sources 'ac-source-yasnippet)
+;; (add-to-list 'ac-sources 'ac-source-yasnippet)
 (ac-config-default)
 (global-auto-complete-mode t)
 (add-hook 'LaTeX-mode-hook 'ac-ispell-ac-setup)
@@ -170,6 +170,7 @@
 
 ;; org
 (org-ac/config-default)
+(setq org-src-fontify-natively t)
 (org-babel-do-load-languages
  'org-babel-load-languages
  '(

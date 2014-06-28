@@ -3,3 +3,5 @@ emacs.d/auto-save-list/
 emacs.d/elpa/*-readme.txt
 emacs.d/semanticdb
 emacs.d/.python-environments
+emacs.d/request
+emacs.d/eshell

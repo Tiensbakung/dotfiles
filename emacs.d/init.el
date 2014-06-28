@@ -212,6 +212,8 @@
 
 ;; temporary workaround for auto-complete being very slow
 (ac-flyspell-workaround)
+(add-hook 'c++-mode-hook
+          (lambda () (setq flycheck-clang-language-standard "c++11")))
 
 (provide 'init)
 ;;; init.el ends here

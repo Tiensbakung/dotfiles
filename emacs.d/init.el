@@ -77,12 +77,12 @@
 (global-set-key [(meta g)] 'goto-line)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "RET") 'newline-and-indent)
-(define-key c-mode-map (kbd "<f6>") 'semantic-ia-describe-class)
-(define-key c-mode-map (kbd "<f7>") 'semantic-ia-show-doc)
-(define-key c-mode-map (kbd "<f8>") 'semantic-ia-show-summary)
-(define-key c++-mode-map (kbd "<f6>") 'semantic-ia-describe-class)
-(define-key c++-mode-map (kbd "<f7>") 'semantic-ia-show-doc)
-(define-key c++-mode-map (kbd "<f8>") 'semantic-ia-show-summary)
+(global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
+(global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
+(global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
+(global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
+(global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
+(global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
 
 
 ;; Spell checking
@@ -207,7 +207,7 @@
  '(haskell-process-log t)
  )
 
-(CUSTOM-set-faces
+(custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.

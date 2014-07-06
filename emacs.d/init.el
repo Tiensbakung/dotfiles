@@ -77,12 +77,12 @@
 (global-set-key [(meta g)] 'goto-line)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "RET") 'newline-and-indent)
-;; (define-key c-mode-map (kbd "<f6>") 'semantic-ia-describe-class)
-;; (define-key c-mode-map (kbd "<f7>") 'semantic-ia-show-doc)
-;; (define-key c-mode-map (kbd "<f8>") 'semantic-ia-show-summary)
-;; (define-key c++-mode-map (kbd "<f6>") 'semantic-ia-describe-class)
-;; (define-key c++-mode-map (kbd "<f7>") 'semantic-ia-show-doc)
-;; (define-key c++-mode-map (kbd "<f8>") 'semantic-ia-show-summary)
+(define-key c-mode-map (kbd "<f6>") 'semantic-ia-describe-class)
+(define-key c-mode-map (kbd "<f7>") 'semantic-ia-show-doc)
+(define-key c-mode-map (kbd "<f8>") 'semantic-ia-show-summary)
+(define-key c++-mode-map (kbd "<f6>") 'semantic-ia-describe-class)
+(define-key c++-mode-map (kbd "<f7>") 'semantic-ia-show-doc)
+(define-key c++-mode-map (kbd "<f8>") 'semantic-ia-show-summary)
 
 
 ;; Spell checking

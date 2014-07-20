@@ -5,3 +5,4 @@ emacs.d/semanticdb
 emacs.d/.python-environments
 emacs.d/request
 emacs.d/eshell
+emacs.d/session.*

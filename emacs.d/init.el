@@ -30,10 +30,11 @@
 (menu-bar-mode t)
 (tool-bar-mode -1)                        ;; No toolbar
 (scroll-bar-mode -1)                      ;; No scroll bar
+(blink-cursor-mode -1)
 (global-auto-revert-mode 1)               ;; Refresh a opened file
 
 (setq invisible-bell t)
-(setq ring-bell-function (lambda ()))     ;; No bell
+(setq ring-bell-function (lambda ()))          ;; No bell
 
 (mouse-avoidance-mode 'animate)           ;; Auto mouse avoidance of curosr
 (setq mouse-yank-at-point t)              ;; Paste at point not cursor
@@ -216,8 +217,13 @@
 
 ;; temporary workaround for auto-complete being very slow
 (ac-flyspell-workaround)
+(setq-default flycheck-clang-language-standard "c++11")
+(setq-default flycheck-clang-include-path
+              '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
+(setq-default flycheck-gcc-include-path
+              '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
 (add-hook 'c++-mode-hook
-          (lambda () (setq flycheck-clang-language-standard "c++11")))
+          (lambda () (setq flycheck-gcc-language-standard "c++11")))
 
 (provide 'init)
 ;;; init.el ends here

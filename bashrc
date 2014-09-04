@@ -14,16 +14,16 @@ if [ $distro == "ManjaroLinux" ]; then
 elif [ $distro == "Arch" ]; then
     alias us="yaourt -Syua"
 elif [ $distro == "LinuxMint" ]; then
-    alias us="sudo apt-get update && sudo apt-get -y dist-upgrade"
+    alias us="sudo apt update && sudo apt -y full-upgrade"
     alias ms="sudo apt-get autoremove && sudo apt-get autoclean"
 elif [ $distro == "Ubuntu" ]; then
-    alias us="sudo apt-get update && sudo apt-get -y dist-upgrade"
+    alias us="sudo apt update && sudo apt -y full-upgrade"
     alias ms="sudo apt-get autoremove && sudo apt-get autoclean"
 elif [ $distro == "SolydXK" ]; then
-    alias us="sudo apt-get update && sudo apt-get -y dist-upgrade"
+    alias us="sudo apt update && sudo apt -y full-upgrade"
     alias ms="sudo apt-get autoremove && sudo apt-get autoclean"
 elif [ $distro == "Debian" ]; then
-    alias us="sudo apt-get update && sudo apt-get -y dist-upgrade"
+    alias us="sudo apt update && sudo apt -y full-upgrade"
     alias ms="sudo apt-get autoremove && sudo apt-get autoclean"
 fi
 

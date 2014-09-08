@@ -67,7 +67,7 @@
 ;;;;;;  image-dired-dired-toggle-marked-thumbs image-dired-dired-insert-marked-thumbs
 ;;;;;;  diredp-wrap-around-flag diredp-w32-local-drives diredp-prompt-for-bookmark-prefix-flag
 ;;;;;;  diff-switches diredp-image-preview-in-tooltip diredp-auto-focus-frame-for-thumbnail-tooltip-flag)
-;;;;;;  "dired+" "dired+.el" (21512 41924 938293 496000))
+;;;;;;  "dired+" "dired+.el" (21517 37439 834162 703000))
 ;;; Generated autoloads from dired+.el
 
 (defvar diredp-auto-focus-frame-for-thumbnail-tooltip-flag nil "\
@@ -1697,7 +1697,7 @@ Send a bug report about a Dired+ problem.
 
 ;;;***
 
-;;;### (autoloads nil nil ("dired+-pkg.el") (21512 41925 67675 93000))
+;;;### (autoloads nil nil ("dired+-pkg.el") (21517 37439 931238 200000))
 
 ;;;***
 

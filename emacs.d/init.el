@@ -75,7 +75,7 @@
 
 (global-set-key [f11] 'toggle-fullscreen)
 (global-set-key [f5] 'recompile)
-(global-set-key [(meta g)] 'goto-line)
+;; (global-set-key [(meta g)] 'goto-line)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (global-set-key (kbd "<f6>") 'semantic-ia-describe-class)

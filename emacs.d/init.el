@@ -129,7 +129,6 @@
 (which-function-mode t)
 (autopair-global-mode t)
 (global-flycheck-mode t)
-(global-rainbow-delimiters-mode t)
 
 ;; pretty mode
 (add-hook 'prog-mode-hook 'pretty-symbols-mode)

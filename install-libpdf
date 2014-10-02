@@ -1,8 +1,0 @@
-cd /tmp
-wget -nc "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-echo "Unpacking Google Chrome..."
-ar x google-chrome-stable_current_amd64.deb
-xz -f --format=lzma --decompress data.tar.lzma
-tar --overwrite -xf data.tar ./opt/google/chrome/libpdf.so
-echo "Copying libpdf.so to chromium"
-sudo mv opt/google/chrome/libpdf.so /usr/lib/chromium/

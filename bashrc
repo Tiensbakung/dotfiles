@@ -27,5 +27,6 @@ elif [ $distro == "Debian" ]; then
     alias ms="sudo apt-get autoremove && sudo apt-get autoclean"
 fi
 
+export EDITOR="vim"
 export GOPATH=$HOME/Workspace/go
 export PATH=$PATH:$GOPATH/bin

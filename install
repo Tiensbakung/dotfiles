@@ -54,3 +54,8 @@ if [ ! -e .i3status.conf ]; then
     ln -fs .dotfiles/i3status.conf .i3status.conf
     echo "symlinked i3status.conf"
 fi
+
+if [ ! -e .compton.conf ]; then
+    ln -fs .dotfiles/compton.conf .compton.conf
+    echo "symlinked compton.conf"
+fi

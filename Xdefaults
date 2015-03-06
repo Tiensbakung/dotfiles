@@ -4,7 +4,7 @@ URxvt*boldFont: xft:Ubuntu Mono:bold:pixelsize=15:antialias=true:hinting=true
 !URxvt*shading: 20
 URxvt*depth: 32
 !URxvt*background: #300a24ee
-URxvt*background: rgba:3030/0a0a/2424/cccc
+URxvt*background: rgba:8080/0a0a/2424/eeee
 URxvt*fading: 10
 URxvt*fadeColor: #a146ff
 URxvt*foreground: #ffffff

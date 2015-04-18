@@ -81,10 +81,10 @@
 (global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
 (global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
 (global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
-(global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
-(global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
-(global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
 
+
+;; auto mode association
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 ;; Spell checking
 ;; (setq ispell-program-name "aspell")
@@ -177,8 +177,7 @@
 (setq org-src-fontify-natively t)
 (org-babel-do-load-languages
  'org-babel-load-languages
- '(
-   (C . t)
+ '((C . t)
    (dot . t)
    (haskell . t)
    (java . t)
@@ -186,8 +185,7 @@
    (python . t)
    (scheme . t)
    (R . t)
-   (ruby . t)
-   ))
+   (ruby . t)))
 
 (require 'ox-latex)
 (add-to-list 'org-latex-classes
@@ -250,10 +248,10 @@
 ;; temporary workaround for auto-complete being very slow
 (ac-flyspell-workaround)
 (setq-default flycheck-clang-language-standard "c++11")
-(setq-default flycheck-clang-include-path
-              '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
-(setq-default flycheck-gcc-include-path
-              '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
+;; (setq-default flycheck-clang-include-path
+;;               '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
+;; (setq-default flycheck-gcc-include-path
+;;               '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
 (add-hook 'c++-mode-hook
           (lambda () (setq flycheck-gcc-language-standard "c++11")))
 

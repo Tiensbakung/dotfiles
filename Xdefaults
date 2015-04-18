@@ -1,13 +1,16 @@
-URxvt*font: xft:Ubuntu Mono:pixelsize=15:antialias=true:hinting=true
-URxvt*boldFont: xft:Ubuntu Mono:bold:pixelsize=15:antialias=true:hinting=true
+URxvt*font: xft:Ubuntu Mono:pixelsize=18:antialias=true:hinting=true
+URxvt*boldFont: xft:Ubuntu Mono:bold:pixelsize=18:antialias=true:hinting=true
 !URxvt*transparent: true
 !URxvt*shading: 20
 URxvt*depth: 32
 !URxvt*background: #300a24ee
-URxvt*background: rgba:8080/0a0a/2424/eeee
+URxvt*background: rgba:3232/1010/4848/cccc
 URxvt*fading: 10
 URxvt*fadeColor: #a146ff
 URxvt*foreground: #ffffff
+URxvt*scrollTtyOutput:      false
+URxvt*scrollWithBuffer:     true
+URxvt*scrollTtyKeypress:    true
 
 *color0:  #2E3436
 *color1:  #a40000

@@ -6,3 +6,5 @@ emacs.d/.python-environments
 emacs.d/request
 emacs.d/eshell
 emacs.d/session.*
+emacs.d/tutorial
+emacs.d/url

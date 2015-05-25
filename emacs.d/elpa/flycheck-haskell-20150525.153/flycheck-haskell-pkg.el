@@ -1,4 +1,4 @@
-(define-package "flycheck-haskell" "20150406.327" "Flycheck: Cabal projects and sandboxes"
+(define-package "flycheck-haskell" "20150525.153" "Flycheck: Cabal projects and sandboxes"
   '((flycheck "0.22")
     (haskell-mode "13.7")
     (dash "2.4.0")

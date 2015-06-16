@@ -118,8 +118,8 @@
 (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode t)
 
 ;; Chinese Input Method: fcitx
-;; (require 'fcitx)
-;; (fcitx-default-setup)
+(require 'fcitx)
+(fcitx-default-setup)
 
 ;; ido with better flx fuzzy matching
 (require 'flx-ido)

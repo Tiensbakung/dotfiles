@@ -155,4 +155,5 @@ bar {
         status_command i3status
 }
 
-exec setxkbmap -option "ctrl:swapcaps"
+exec --no-startup-id setxkbmap -layout us -option "" -option ctrl:swapcaps
+exec --no-startup-id nm-applet

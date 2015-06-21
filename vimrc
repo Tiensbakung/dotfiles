@@ -4,6 +4,7 @@ set nu
 set nobackup
 set paste
 set smartcase " ignore case if search patter is all lowercase, case-sensitive otherwise
+set ignorecase
 set background=dark
 set showmatch
 

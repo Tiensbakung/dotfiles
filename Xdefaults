@@ -11,6 +11,10 @@ URxvt*foreground: #ffffff
 URxvt*scrollTtyOutput:      false
 URxvt*scrollWithBuffer:     true
 URxvt*scrollTtyKeypress:    true
+URxvt*letterSpace: -1
+URxvt*scrollBar: true
+URxvt*scrollstyle: plain
+URxvt*scrollBar_right: true
 
 *color0:  #2E3436
 *color1:  #a40000

@@ -3,9 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "jedi-core" "jedi-core.el" (22134 63695 224448
-;;;;;;  829000))
-;;; Generated autoloads from jedi-core.el
+;;;### (autoloads nil "jedi-core" "../../../../.emacs.d/elpa/jedi-core-20151214.705/jedi-core.el"
+;;;;;;  "e70d2b8886cd2e0403f5a2fe2ac38061")
+;;; Generated autoloads from ../../../../.emacs.d/elpa/jedi-core-20151214.705/jedi-core.el
 
 (autoload 'jedi:start-dedicated-server "jedi-core" "\
 Start Jedi server dedicated to this buffer.
@@ -95,8 +95,10 @@ Blocking version `jedi:install-server'.
 
 ;;;***
 
-;;;### (autoloads nil nil ("jedi-core-pkg.el") (22134 63695 363515
-;;;;;;  473000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa/jedi-core-20151214.705/jedi-core-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa/jedi-core-20151214.705/jedi-core-pkg.el"
+;;;;;;  "../../../../.emacs.d/elpa/jedi-core-20151214.705/jedi-core.el")
+;;;;;;  (22170 16868 899732 324000))
 
 ;;;***
 

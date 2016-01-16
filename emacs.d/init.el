@@ -61,23 +61,11 @@
 ;;  '((top . 25) (left . 0) (height . 32) (width . 80)))
 
 ;; Appearance customization
-;; (load-theme 'tsdh-light)
 ;; (set-frame-parameter nil 'font "Droid Sans Mono-11")
 
-(defun toggle-fullscreen (&optional f)
-  (interactive)
-  (let ((current-value (frame-parameter nil 'fullscreen)))
-    (set-frame-parameter nil 'fullscreen
-      (if (equal 'fullboth current-value)
-        (if (boundp 'old-fullscreen) old-fullscreen nil)
-        (progn (setq old-fullscreen current-value)
-          'fullboth)))))
-
-(global-set-key [f11] 'toggle-fullscreen)
-(global-set-key [f5] 'recompile)
-;; (global-set-key [(meta g)] 'goto-line)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "RET") 'newline-and-indent)
+(global-set-key [f5] 'recompile)
 (global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
 (global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
 (global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
@@ -93,7 +81,6 @@
 
 
 (setq c-default-style "linux")
-
 (setq default-directory "~/Workspace/")
 
 ;; Ropemacs
@@ -114,12 +101,9 @@
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 
 ;; ibuffer
+(require 'ibuffer)
 (setq ibuffer-expert t)
 (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode t)
-
-;; Chinese Input Method: fcitx
-(require 'fcitx)
-(fcitx-default-setup)
 
 ;; ido with better flx fuzzy matching
 (require 'flx-ido)
@@ -130,6 +114,7 @@
 
 (require 'font-lock+)
 (require 'dired+)
+(require 'ispell)
 (which-function-mode t)
 (autopair-global-mode t)
 (global-flycheck-mode t)
@@ -139,41 +124,37 @@
 (add-hook 'python-mode-hook 'pretty-symbols-mode)
 (require 'latex-pretty-symbols)
 
-;; auto-complete
-(defun c-add-ac-source ()
-  (add-to-list 'ac-sources 'ac-source-gtags)
-  (add-to-list 'ac-sources 'ac-source-semantic))
-(eval-after-load "auto-complete" '(progn (ac-ispell-setup)))
-(require 'auto-complete-config)
-(require 'ispell)
-(add-to-list 'ac-sources 'ac-source-ispell)
-;; (add-to-list 'ac-sources 'ac-source-yasnippet)
-(ac-config-default)
-(global-auto-complete-mode t)
-(add-hook 'LaTeX-mode-hook 'ac-ispell-ac-setup)
-(add-hook 'text-mode-hook 'ac-ispell-ac-setup)
-(add-hook 'org-mode-hook 'ac-ispell-ac-setup)
-(add-hook 'c-mode-common-hook 'c-add-ac-source)
+;; company mode
+(require 'company)
+(require 'company-c-headers)
+(require 'company-clang)
+(setq company-backends (delete 'company-semantic company-backends))
+(add-to-list 'company-backends 'company-c-headers)
+(add-to-list 'company-c-headers-path-system "/usr/include/c++/5.3.0/")
+(add-to-list 'company-clang-arguments "-std=c++11")
+(add-hook 'after-init-hook 'global-company-mode)
+
 
 ;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
 
 ;; jedi
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:setup-keys t)
-(setq jedi:complete-on-dot t)
+(defun my/python-mode-hook()
+  (add-to-list 'company-backends 'company-jedi))
+(add-hook 'python-mode-hook 'my/python-mode-hook)
 
 ;; Emacs Development Environment
+(require 'semantic)
 (global-ede-mode 1)
-(semantic-mode 1)
 (global-semanticdb-minor-mode 1)
-(global-semantic-idle-summary-mode 1)
+(global-semantic-idle-scheduler-mode 1)
+(semantic-mode 1)
 ;; (speedbar 1)
 ;; (setq speedbar-use-images nil)
 
 ;; org
-(org-ac/config-default)
+(require 'org)
 (setq org-src-fontify-natively t)
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -211,8 +192,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ac-ispell-fuzzy-limit 3)
- '(ac-ispell-requires 3)
  '(doc-view-continuous t)
  '(ess-R-font-lock-keywords
    (quote
@@ -245,15 +224,13 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; temporary workaround for auto-complete being very slow
-(ac-flyspell-workaround)
 (setq-default flycheck-clang-language-standard "c++11")
+(add-hook 'c++-mode-hook
+          (lambda () (setq flycheck-gcc-language-standard "c++11")))
 ;; (setq-default flycheck-clang-include-path
 ;;               '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
 ;; (setq-default flycheck-gcc-include-path
 ;;               '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
-(add-hook 'c++-mode-hook
-          (lambda () (setq flycheck-gcc-language-standard "c++11")))
 
 (provide 'init)
 ;;; init.el ends here

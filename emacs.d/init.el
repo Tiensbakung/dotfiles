@@ -105,13 +105,6 @@
 (setq ibuffer-expert t)
 (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode t)
 
-;; ido with better flx fuzzy matching
-(require 'flx-ido)
-(setq ido-use-faces nil)
-(flx-ido-mode 1)
-(ido-everywhere 1)
-(ido-mode t)
-
 (require 'font-lock+)
 (require 'dired+)
 (require 'ispell)
@@ -152,6 +145,38 @@
 (semantic-mode 1)
 ;; (speedbar 1)
 ;; (setq speedbar-use-images nil)
+
+;; helm setup
+(require 'helm)
+(require 'helm-config)
+(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+(define-key helm-map (kbd "C-z")  'helm-select-action)
+(setq helm-split-window-in-side-p t
+      helm-move-to-line-cycle-in-source t
+      helm-ff-search-library-in-sexp t
+      helm-scroll-amount 8
+      helm-ff-file-name-history-use-recentf t)
+
+(setq helm-M-x-fuzzy-match t
+      helm-buffers-fuzzy-matching t
+      helm-recentf-fuzzy-match t
+      helm-semantic-fuzzy-match t
+      helm-imenu-fuzzy-match t
+      helm-locate-fuzzy-match t
+      helm-apropos-fuzzy-match t
+      helm-lisp-fuzzy-completion t)
+(helm-mode 1)
+
+;; helm key bindings
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-c h o") 'helm-occur)
+(global-set-key (kbd "C-c h SPC") 'helm-all-mark-rings)
+(global-set-key (kbd "C-c h x") 'helm-register)
 
 ;; org
 (require 'org)

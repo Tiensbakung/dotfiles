@@ -3,7 +3,9 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil nil ("flx.el") (22134 63762 561530 985000))
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa/flx-20151030.1112/flx-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa/flx-20151030.1112/flx.el") (22170
+;;;;;;  31681 26137 876000))
 
 ;;;***
 

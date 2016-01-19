@@ -22,6 +22,7 @@
 
 (setq inhibit-startup-message t)          ;; Don't show GNU splash screen
 (setq-default make-backup-files nil)      ;; No backup file
+(setq ad-redefinition-action 'accept)
 (put 'dired-find-alternate-file 'disabled nil)
 (fset 'yes-or-no-p 'y-or-n-p)
 (transient-mark-mode t)                   ;; Highlight selected region

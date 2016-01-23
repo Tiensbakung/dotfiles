@@ -235,7 +235,7 @@
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
- '(org-agenda-files (quote ("~/Workspace/org/cumulocity.org")))
+ '(org-agenda-files (quote ("~/Workspace/org")))
  '(org-file-apps
    (quote
     ((auto-mode . emacs)

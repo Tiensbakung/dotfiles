@@ -11,8 +11,10 @@ PS1='\[\e[1;32m\][\u\[\e[m\]@\[\e[1;35m\]\h \[\e[1;34m\]\W]\[\e[m\] \[\e[1;32m\]
 distro=`lsb_release -si`
 if [ $distro == "ManjaroLinux" ]; then
     alias us="yaourt -Syua"
+    alias ms="yaourt -Scc"
 elif [ $distro == "Arch" ]; then
     alias us="yaourt -Syua"
+    alias ms="yaourt -Scc"
 elif [ $distro == "LinuxMint" ]; then
     alias us="sudo apt update && sudo apt -y full-upgrade"
     alias ms="sudo apt-get autoremove && sudo apt-get autoclean"

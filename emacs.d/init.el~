@@ -148,6 +148,9 @@
 ;; (setq speedbar-use-images nil)
 
 ;; helm setup
+(require 'recentf)
+(setq recentf-max-saved-items 1000)
+(setq recentf-max-menu-items 10)
 (require 'helm)
 (require 'helm-config)
 (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)

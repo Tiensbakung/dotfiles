@@ -25,6 +25,11 @@ if ! grep -Gq "dotfiles/bashrc " ~/.bashrc; then
     echo "sourced bashrc file."
 fi
 
+if ! grep -Gq "dotfiles/zshrc" ~/.zshrc; then
+    echo 'test -f ~/.dotfiles/zshrc && source ~/.dotfiles/zshrc' >> .zshrc
+    echo 'sourced zshrc file.'
+fi
+
 if [ ! -e .emacs.d ]; then
     ln -fs .dotfiles/emacs.d .emacs.d
     echo "symlinked emacs.d"

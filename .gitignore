@@ -13,3 +13,5 @@ emacs.d/ido.last
 emacs.d/recentf
 emacs.d/init.el
 emacs.d/bookmarks
+emacs.d/projectile-bookmarks.eld
+emacs.d/projectile.cache

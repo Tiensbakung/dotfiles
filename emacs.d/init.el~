@@ -67,9 +67,9 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (global-set-key [f5] 'recompile)
-(global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
-(global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
-(global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
+;; (global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
+;; (global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
+;; (global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
 
 
 ;; auto mode association
@@ -118,16 +118,23 @@
 (add-hook 'python-mode-hook 'pretty-symbols-mode)
 (require 'latex-pretty-symbols)
 
+;; irony mode
+(require 'irony)
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
+(setq irony-additional-clang-options '("-std=c++11"))
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+(add-hook 'irony-mode-hook 'irony-eldoc)
+
 ;; company mode
 (require 'company)
-(require 'company-c-headers)
-(require 'company-clang)
+(require 'company-irony-c-headers)
 (setq company-backends (delete 'company-semantic company-backends))
-(add-to-list 'company-backends 'company-c-headers)
-(add-to-list 'company-c-headers-path-system "/usr/include/c++/5.3.0/")
-(add-to-list 'company-clang-arguments "-std=c++11")
+(add-to-list 'company-backends 'company-irony)
+(add-to-list 'company-backends 'company-irony-c-headers)
 (add-hook 'after-init-hook 'global-company-mode)
-
 
 ;; Yasnippet
 (require 'yasnippet)
@@ -139,10 +146,10 @@
 (add-hook 'python-mode-hook 'my/python-mode-hook)
 
 ;; Emacs Development Environment
-(require 'semantic)
-(global-semanticdb-minor-mode 1)
-(global-semantic-idle-scheduler-mode 1)
-(semantic-mode 1)
+;; (require 'semantic)
+;; (global-semanticdb-minor-mode 1)
+;; (global-semantic-idle-scheduler-mode 1)
+;; (semantic-mode 1)
 ;; (speedbar 1)
 ;; (setq speedbar-use-images nil)
 

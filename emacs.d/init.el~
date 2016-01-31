@@ -195,6 +195,8 @@
 (helm-projectile-on)
 (setq projectile-completion-system 'helm)
 (setq projectile-switch-project-action 'helm-projectile-find-file)
+(add-to-list 'projectile-other-file-alist '("cc" "h"))
+(add-to-list 'projectile-other-file-alist '("h" "cc"))
 (add-to-list 'projectile-globally-ignored-directories "bin")
 (add-to-list 'projectile-globally-ignored-directories "lib")
 (add-to-list 'projectile-globally-ignored-directories "build")

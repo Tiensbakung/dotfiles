@@ -1,5 +1,6 @@
 autoload -Uz compinit && compinit
 setopt HIST_IGNORE_DUPS
+setopt INTERACTIVE_COMMENTS
 autoload -U promptinit && promptinit
 autoload -U colors && colors
 zstyle ':completion:*' rehash true

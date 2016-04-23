@@ -58,11 +58,10 @@
 (setq display-time-24hr-format t)
 (setq display-day-and-date t)
 
-;; (setq default-frame-alist
-;;  '((top . 25) (left . 0) (height . 32) (width . 80)))
 
 ;; Appearance customization
-;; (set-frame-parameter nil 'font "Droid Sans Mono-11")
+(set-frame-font "Monospace-11" nil t)
+(setq default-frame-alist '((top . 25) (left . 0) (height . 34) (width . 84)))
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -131,6 +130,7 @@
 ;; company mode
 (require 'company)
 (require 'company-irony-c-headers)
+(setq company-dabbrev-downcase nil)
 (setq company-backends (delete 'company-semantic company-backends))
 (add-to-list 'company-backends 'company-irony)
 (add-to-list 'company-backends 'company-irony-c-headers)
@@ -141,8 +141,7 @@
 (yas-global-mode 1)
 
 ;; jedi
-(defun my/python-mode-hook()
-  (add-to-list 'company-backends 'company-jedi))
+(defun my/python-mode-hook() (add-to-list 'company-backends 'company-jedi))
 (add-hook 'python-mode-hook 'my/python-mode-hook)
 
 ;; Emacs Development Environment
@@ -204,6 +203,14 @@
 
 ;; org
 (require 'org)
+(require 'ox-latex)
+(setq org-latex-listings 'minted)
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+(setq org-latex-minted-options
+      '(("frame" "lines")
+        ("fontsize" "\\scriptsize")
+        ("linenos" "")))
+(setq org-latex-pdf-process (list "latexmk -shell-escape -pdf %f"))
 (global-set-key (kbd "C-c c") 'org-capture)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (setq org-default-notes-file "~/Workspace/org/notes.org")
@@ -232,6 +239,16 @@
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
 (require 'ess-site)
+
+(require 'diminish)
+(diminish 'projectile-mode " P")
+(diminish 'company-mode " C")
+(diminish 'helm-mode)
+(diminish 'abbrev-mode)
+(diminish 'autopair-mode)
+(diminish 'pretty-symbols-mode)
+(diminish 'irony-mode)
+(diminish 'yas-minor-mode)
 
 ;; Remove trailing white spaces in w3m
 (add-hook 'w3m-display-hook

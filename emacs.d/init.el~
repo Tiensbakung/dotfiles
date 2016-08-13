@@ -204,12 +204,14 @@
 ;; org
 (require 'org)
 (require 'ox-latex)
+(eval-after-load "org" '(require 'ox-md nil t))
 (setq org-latex-listings 'minted)
 (add-to-list 'org-latex-packages-alist '("" "minted"))
 (setq org-latex-minted-options
       '(("frame" "lines")
         ("fontsize" "\\scriptsize")
-        ("linenos" "")))
+        ("linenos" "")
+        ("breaklines" "")))
 (setq org-latex-pdf-process (list "latexmk -shell-escape -pdf %f"))
 (global-set-key (kbd "C-c c") 'org-capture)
 (global-set-key (kbd "C-c a") 'org-agenda)
@@ -247,6 +249,7 @@
 (diminish 'abbrev-mode)
 (diminish 'autopair-mode)
 (diminish 'pretty-symbols-mode)
+(diminish 'flyspell-mode)
 (diminish 'irony-mode)
 (diminish 'yas-minor-mode)
 

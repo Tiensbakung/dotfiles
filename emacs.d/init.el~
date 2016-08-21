@@ -33,6 +33,7 @@
 (scroll-bar-mode -1)                      ;; No scroll bar
 (blink-cursor-mode -1)
 (global-auto-revert-mode 1)               ;; Refresh a opened file
+(put 'narrow-to-region 'disabled nil)
 
 (setq invisible-bell t)
 (setq ring-bell-function (lambda ()))          ;; No bell

@@ -1,5 +1,5 @@
 autoload -Uz compinit && compinit
-setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
 setopt INTERACTIVE_COMMENTS
 autoload -U promptinit && promptinit
 autoload -U colors && colors

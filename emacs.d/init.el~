@@ -26,6 +26,7 @@
 (put 'dired-find-alternate-file 'disabled nil)
 (fset 'yes-or-no-p 'y-or-n-p)
 (transient-mark-mode t)                   ;; Highlight selected region
+(electric-pair-mode t)
 (delete-selection-mode 1)
 (global-font-lock-mode t)
 (menu-bar-mode t)
@@ -106,11 +107,9 @@
 (setq ibuffer-expert t)
 (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode t)
 
-(require 'font-lock+)
 (require 'dired+)
 (require 'ispell)
 (which-function-mode t)
-(autopair-global-mode t)
 (global-flycheck-mode t)
 
 ;; pretty mode
@@ -248,7 +247,6 @@
 (diminish 'company-mode " C")
 (diminish 'helm-mode)
 (diminish 'abbrev-mode)
-(diminish 'autopair-mode)
 (diminish 'pretty-symbols-mode)
 (diminish 'flyspell-mode)
 (diminish 'irony-mode)
@@ -259,6 +257,14 @@
           (lambda (url)
             (let ((buffer-read-only nil))
               (delete-trailing-whitespace))))
+
+(autoload 'po-mode "po-mode"
+  "Major mode for translators to edit PO files" t)
+(setq auto-mode-alist (cons '("\\.po\\'\\|\\.po\\." . po-mode)
+                            auto-mode-alist))
+(autoload 'po-find-file-coding-system "po-compat")
+(modify-coding-system-alist 'file "\\.po\\'\\|\\.po\\."
+                            'po-find-file-coding-system)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.

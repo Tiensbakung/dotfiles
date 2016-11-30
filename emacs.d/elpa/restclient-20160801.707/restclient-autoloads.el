@@ -1,11 +1,11 @@
 ;;; restclient-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
+(add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "restclient" "restclient.el" (22440 34145 774506
-;;;;;;  305000))
-;;; Generated autoloads from restclient.el
+;;;### (autoloads nil "restclient" "../../../../.emacs.d/elpa/restclient-20160801.707/restclient.el"
+;;;;;;  "7a2419194189d84dd6d07f9d20a615e3")
+;;; Generated autoloads from ../../../../.emacs.d/elpa/restclient-20160801.707/restclient.el
 
 (autoload 'restclient-http-send-current "restclient" "\
 Sends current request.
@@ -28,6 +28,12 @@ Send current request and keep focus in request window.
 Turn on restclient mode.
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("../../../../.emacs.d/elpa/restclient-20160801.707/restclient-autoloads.el"
+;;;;;;  "../../../../.emacs.d/elpa/restclient-20160801.707/restclient.el")
+;;;;;;  (22590 63933 237684 777000))
 
 ;;;***
 

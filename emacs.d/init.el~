@@ -2,9 +2,11 @@
 ;;; Commentary:
 ;;; Personal Emacs init.el
 ;;; Code:
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+(setq package-archives '(
+                         ;; ("gnu" . "http://elpa.gnu.org/packages/")
                          ;; ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ))
 
 ;; set emacs encoding
 (setq current-language-environment "UTF-8")
@@ -43,7 +45,7 @@
 (setq mouse-yank-at-point t)              ;; Paste at point not cursor
 (setq x-select-enable-clipboard t)
 
-(global-linum-mode t)                     ;; Show line numbers
+;; (global-linum-mode t)                     ;; Show line numbers
 (column-number-mode t)
 (global-hl-line-mode t)                   ;; Highlight current line
 (show-paren-mode t)                       ;; Highlight matching parenthesis
@@ -56,9 +58,9 @@
 (add-hook 'text-mode-hook 'visual-line-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
 
-(display-time-mode 1)
-(setq display-time-24hr-format t)
-(setq display-day-and-date t)
+;; (display-time-mode 1)
+;; (setq display-time-24hr-format t)
+;; (setq display-day-and-date t)
 
 
 ;; Appearance customization
@@ -144,56 +146,25 @@
 (defun my/python-mode-hook() (add-to-list 'company-backends 'company-jedi))
 (add-hook 'python-mode-hook 'my/python-mode-hook)
 
-;; Emacs Development Environment
-;; (require 'semantic)
-;; (global-semanticdb-minor-mode 1)
-;; (global-semantic-idle-scheduler-mode 1)
-;; (semantic-mode 1)
-;; (speedbar 1)
-;; (setq speedbar-use-images nil)
-
-;; helm setup
-(require 'recentf)
-(setq recentf-max-saved-items 1000)
-(setq recentf-max-menu-items 10)
-(require 'helm)
-(require 'helm-config)
-(add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-(define-key helm-map (kbd "C-z")  'helm-select-action)
-(setq helm-split-window-in-side-p t
-      helm-move-to-line-cycle-in-source t
-      helm-ff-search-library-in-sexp t
-      helm-scroll-amount 8
-      helm-ff-file-name-history-use-recentf t)
-
-(setq helm-M-x-fuzzy-match t
-      helm-buffers-fuzzy-matching t
-      helm-recentf-fuzzy-match t
-      helm-semantic-fuzzy-match t
-      helm-imenu-fuzzy-match t
-      helm-locate-fuzzy-match t
-      helm-apropos-fuzzy-match t
-      helm-lisp-fuzzy-completion t)
-(helm-mode 1)
-
-;; helm key bindings
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-c h o") 'helm-occur)
-(global-set-key (kbd "C-c h SPC") 'helm-all-mark-rings)
-(global-set-key (kbd "C-c h x") 'helm-register)
+;; ivy mode
+(require 'ivy)
+(ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(setq ivy-initial-inputs-alist nil)
+(setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+(global-set-key (kbd "C-c i r") 'ivy-resume)
+(global-set-key (kbd "C-c i a") 'counsel-ag)
+(global-set-key (kbd "C-c i i") 'counsel-imenu)
+(global-set-key (kbd "C-c i j") 'counsel-git)
+(global-set-key (kbd "C-c i g") 'counsel-git-grep)
+(global-set-key (kbd "C-c i l") 'counsel-locate)
+(global-set-key (kbd "C-c i s") 'swiper)
+(global-set-key (kbd "M-y") 'counsel-yank-pop)
 
 ;; projectile
 (require 'projectile)
-(require 'helm-projectile)
-(projectile-global-mode)
-(helm-projectile-on)
-(setq projectile-completion-system 'helm)
-(setq projectile-switch-project-action 'helm-projectile-find-file)
+(projectile-mode 1)
+(setq projectile-completion-system 'ivy)
 (add-to-list 'projectile-other-file-alist '("cc" "h"))
 (add-to-list 'projectile-other-file-alist '("h" "cc"))
 (add-to-list 'projectile-globally-ignored-directories "bin")
@@ -245,12 +216,13 @@
 (require 'diminish)
 (diminish 'projectile-mode " P")
 (diminish 'company-mode " C")
-(diminish 'helm-mode)
 (diminish 'abbrev-mode)
 (diminish 'pretty-symbols-mode)
 (diminish 'flyspell-mode)
 (diminish 'irony-mode)
 (diminish 'yas-minor-mode)
+(diminish 'ivy-mode)
+(diminish 'flyspell-mode)
 
 ;; Remove trailing white spaces in w3m
 (add-hook 'w3m-display-hook
@@ -294,7 +266,10 @@
     ((auto-mode . emacs)
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" browse-url file)
-     ("pdf" . "evince %s")))))
+     ("pdf" . "evince %s"))))
+ '(package-selected-packages
+   (quote
+    (restclient ivy-hydra counsel yaxception w3m virtualenv swiper pyvirtualenv pyvenv python-pylint python-pep8 python pylint pyflakes py-import-check pretty-symbols nose markdown-mode lua-mode log4e latex-pretty-symbols latex-extra kivy-mode irony-eldoc ipython iedit highlight-indentation graphviz-dot-mode gnuplot-mode gnuplot ghci-completion ggtags fuzzy fullscreen-mode flycheck-irony flycheck-haskell find-file-in-project f ein dired+ diminish company-quickhelp company-math company-jedi company-irony-c-headers company-irony company-ghci company-ghc company-flx company-auctex))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -303,6 +278,9 @@
  ;; If there is more than one, they won't work right.
  )
 
+(setq compilation-environment
+      '("NTC_SDK_PATH=/tmp/SDK_Bovine_ntc_6200_2.0.24.3"
+        "C8Y_LIB_PATH=/tmp/src/smartrest"))
 (setq-default flycheck-clang-language-standard "c++11")
 (add-hook 'c++-mode-hook
           (lambda () (setq flycheck-gcc-language-standard "c++11")))

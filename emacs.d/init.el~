@@ -150,6 +150,7 @@
 (require 'ivy)
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
+(setq ivy-count-format "(%d/%d) ")
 (setq ivy-initial-inputs-alist nil)
 (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
 (global-set-key (kbd "C-c i r") 'ivy-resume)
@@ -158,6 +159,7 @@
 (global-set-key (kbd "C-c i j") 'counsel-git)
 (global-set-key (kbd "C-c i g") 'counsel-git-grep)
 (global-set-key (kbd "C-c i l") 'counsel-locate)
+(global-set-key (kbd "C-c i b") 'counsel-descbinds)
 (global-set-key (kbd "C-c i s") 'swiper)
 (global-set-key (kbd "M-y") 'counsel-yank-pop)
 
@@ -216,6 +218,7 @@
 (require 'diminish)
 (diminish 'projectile-mode " P")
 (diminish 'company-mode " C")
+(diminish 'eldoc-mode " El")
 (diminish 'abbrev-mode)
 (diminish 'pretty-symbols-mode)
 (diminish 'flyspell-mode)
@@ -269,7 +272,7 @@
      ("pdf" . "evince %s"))))
  '(package-selected-packages
    (quote
-    (restclient ivy-hydra counsel yaxception w3m virtualenv swiper pyvirtualenv pyvenv python-pylint python-pep8 python pylint pyflakes py-import-check pretty-symbols nose markdown-mode lua-mode log4e latex-pretty-symbols latex-extra kivy-mode irony-eldoc ipython iedit highlight-indentation graphviz-dot-mode gnuplot-mode gnuplot ghci-completion ggtags fuzzy fullscreen-mode flycheck-irony flycheck-haskell find-file-in-project f ein dired+ diminish company-quickhelp company-math company-jedi company-irony-c-headers company-irony company-ghci company-ghc company-flx company-auctex))))
+    (restclient ivy-hydra counsel yaxception w3m virtualenv swiper pyvirtualenv pyvenv python-pylint python-pep8 pylint pyflakes py-import-check pretty-symbols nose markdown-mode lua-mode latex-pretty-symbols latex-extra kivy-mode irony-eldoc iedit highlight-indentation graphviz-dot-mode gnuplot-mode gnuplot ghci-completion ggtags fuzzy flycheck-irony flycheck-haskell find-file-in-project ein dired+ diminish company-quickhelp company-math company-jedi company-irony-c-headers company-irony company-ghci company-ghc company-flx company-auctex))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

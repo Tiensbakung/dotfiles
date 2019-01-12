@@ -18,3 +18,6 @@ emacs.d/projectile.cache
 emacs.d/ede-projects.el
 emacs.d/irony
 __pycache__
+.lsp-session-v1
+eclipse.jdt.ls/
+workspace/

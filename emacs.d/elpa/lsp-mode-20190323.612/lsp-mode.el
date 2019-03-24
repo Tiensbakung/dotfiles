@@ -266,8 +266,8 @@ the server has requested that."
   :group 'lsp-mode
   :type '(repeat string))
 
-(defcustom lsp-before-uninitialized-hook nil
-  "List of functions to be called before a Language Server has been uninitialized."
+(defcustom lsp-after-uninitialized-hook nil
+  "List of functions to be called after a Language Server has been uninitialized."
   :type 'hook
   :group 'lsp-mode)
 
@@ -353,6 +353,11 @@ the symbol information."
   :type 'boolean
   :group 'lsp-mode)
 
+(defcustom lsp-enable-symbol-highlighting t
+  "Highlight references of the symbol at point."
+  :type 'boolean
+  :group 'lsp-mode)
+
 (defcustom lsp-enable-xref t
   "Enable xref integration."
   :type 'boolean
@@ -395,7 +400,7 @@ The hook is called with two params: the signature information and hover data."
   :type 'hook
   :group 'lsp-mode)
 
-(defcustom lsp-eldoc-hook '(lsp-document-highlight lsp-hover)
+(defcustom lsp-eldoc-hook '(lsp-hover)
   "Hooks to run for eldoc."
   :type 'hook
   :group 'lsp-mode)
@@ -540,6 +545,11 @@ must be used for handling a particular message.")
   "Debounce interval for loading lenses."
   :group 'lsp-mode
   :type 'boolean)
+
+(defcustom lsp-document-highlight-delay 0.2
+  "Seconds of idle time to wait before showing symbol highlight."
+  :type 'number
+  :group 'lsp-mode)
 
 (defface lsp-lens-mouse-face
   '((t :height 0.8 :inherit link))
@@ -1935,7 +1945,6 @@ If NO-MERGE is non-nil, don't merge the results but return alist workspace->resu
   "Cleanup buffer state.
 When a workspace is shut down, by request or from just
 disappearing, unset all the variables related to it."
-  (run-hooks 'lsp-workspace-uninitialized-hook)
 
   (let ((proc (lsp--workspace-cmd-proc lsp--cur-workspace)))
     (when (process-live-p proc)
@@ -2164,12 +2173,14 @@ in that particular folder."
       (add-hook 'completion-at-point-functions #'lsp-completion-at-point nil t))
     (add-hook 'kill-buffer-hook #'lsp--text-document-did-close nil t)
     (add-hook 'post-self-insert-hook #'lsp--on-self-insert nil t)
+    (add-hook 'post-command-hook #'lsp--highlight nil t)
     (when lsp-enable-xref
       (add-hook 'xref-backend-functions #'lsp--xref-backend nil t)))
    (t
     (setq-local indent-region-function nil)
     (remove-function (local 'eldoc-documentation-function) #'lsp-eldoc-function)
 
+    (remove-hook 'post-command-hook #'lsp--highlight t)
     (remove-hook 'after-change-functions #'lsp-on-change t)
     (remove-hook 'after-revert-hook #'lsp-on-revert t)
     (remove-hook 'after-save-hook #'lsp-on-save t)
@@ -2901,6 +2912,31 @@ If INCLUDE-DECLARATION is non-nil, request the server to include declarations."
        (lsp-capability-not-supported nil))
      nil)) nil)
 
+(defvar-local lsp--highlight-bounds nil)
+(defvar-local lsp--highlight-timer nil)
+
+(defun lsp--highlight ()
+  (with-demoted-errors "Error in ‘lsp--highlight’: %S"
+    (when (and lsp-enable-symbol-highlighting
+               (lsp--capability "documentHighlightProvider"))
+      (let ((bounds (bounds-of-thing-at-point 'symbol))
+            (last lsp--highlight-bounds)
+            (point (point)))
+        (when (and last (or (< point (car last)) (> point (cdr last))))
+          (setq lsp--highlight-bounds nil)
+          (--each (lsp-workspaces)
+            (with-lsp-workspace it
+              (lsp--remove-cur-overlays))))
+        (when (and bounds (not (equal last bounds)))
+          (and lsp--highlight-timer (cancel-timer lsp--highlight-timer))
+          (setq lsp--highlight-timer
+                (run-with-idle-timer
+                 lsp-document-highlight-delay nil
+                 (lambda nil
+                   (setq lsp--highlight-bounds
+                         (bounds-of-thing-at-point 'symbol))
+                   (lsp--document-highlight)))))))))
+
 (defun lsp-describe-thing-at-point ()
   "Display the full documentation of the thing at point."
   (interactive)
@@ -3165,14 +3201,17 @@ interface DocumentRangeFormattingParams {
       (delete-overlay overlay))
     (remhash buf overlays)))
 
+(defun lsp--document-highlight ()
+  (lsp-request-async "textDocument/documentHighlight"
+                     (lsp--text-document-position-params)
+                     (lsp--make-document-highlight-callback (current-buffer))))
+
 (defun lsp-document-highlight ()
   "Highlight all relevant references to the symbol under point."
   (interactive)
   (unless (lsp--capability "documentHighlightProvider")
     (signal 'lsp-capability-not-supported (list "documentHighlightProvider")))
-  (lsp-request-async "textDocument/documentHighlight"
-                     (lsp--text-document-position-params)
-                     (lsp--make-document-highlight-callback (current-buffer))))
+  (lsp--document-highlight))
 
 (defun lsp--make-document-highlight-callback (buf)
   "Create a callback to process the reply of a
@@ -4129,6 +4168,8 @@ returns the command to execute."
         ;; Leave it intact otherwise for debugging purposes.
         (when (and (eq status 'exit) (zerop (process-exit-status process)) (buffer-live-p stderr))
           (kill-buffer stderr)))
+
+      (run-hook-with-args 'lsp-after-uninitialized-hook workspace)
 
       (if (eq (lsp--workspace-shutdown-action workspace) 'shutdown)
           (lsp--info "Workspace %s shutdown." (lsp--workspace-print workspace))

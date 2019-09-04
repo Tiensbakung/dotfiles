@@ -85,16 +85,9 @@
 
 
 (setq c-default-style "linux")
+(setq c-basic-offset 4)
+;; (add-hook 'java-mode-hook (lambda () (setq c-basic-offset 4)))
 (setq default-directory "~/Workspace/")
-
-;; Ropemacs
-;; (autoload 'pymacs-apply "pymacs")
-;; (autoload 'pymacs-call "pymacs")
-;; (autoload 'pymacs-eval "pymacs" nil t)
-;; (autoload 'pymacs-exec "pymacs" nil t)
-;; (autoload 'pymacs-load "pymacs" nil t)
-;; (pymacs-load "ropemacs" "rope-")
-;; (setq repemacs-enable-autoimport t)
 
 (package-initialize)
 
@@ -111,31 +104,36 @@
 
 (require 'dired+)
 (require 'ispell)
-(which-function-mode t)
-(global-flycheck-mode t)
-
-;; pretty mode
-(add-hook 'prog-mode-hook 'pretty-symbols-mode)
-(add-hook 'python-mode-hook 'pretty-symbols-mode)
-(require 'latex-pretty-symbols)
+;; (which-function-mode t)
+;; (global-flycheck-mode t)
 
 ;; irony mode
-(require 'irony)
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
-(setq irony-additional-clang-options '("-std=c++11"))
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-(add-hook 'irony-mode-hook 'irony-eldoc)
+;; (require 'irony)
+;; (add-hook 'c++-mode-hook 'irony-mode)
+;; (add-hook 'c-mode-hook 'irony-mode)
+;; (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
+;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+;; (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+;; (add-hook 'irony-mode-hook 'irony-eldoc)
+
+;; lsp mode
+(require 'lsp-mode)
+(require 'lsp-clients)
+(require 'lsp-java)
+(require 'lsp-ui)
+;; (setq lsp-prefer-flymake nil)
+(add-hook 'java-mode-hook #'lsp)
+(add-hook 'python-mode-hook #'lsp)
+(add-hook 'c-mode-hook #'lsp)
+(add-hook 'c++-mode-hook #'lsp)
+;; (add-hook 'go-mode-hook #'lsp)
 
 ;; company mode
 (require 'company)
-(require 'company-irony-c-headers)
 (setq company-dabbrev-downcase nil)
 (setq company-backends (delete 'company-semantic company-backends))
-(add-to-list 'company-backends 'company-irony)
-(add-to-list 'company-backends 'company-irony-c-headers)
+;; (add-to-list 'company-backends 'company-irony)
+;; (add-to-list 'company-backends 'company-irony-c-headers)
 (add-hook 'after-init-hook 'global-company-mode)
 
 ;; Yasnippet
@@ -143,8 +141,8 @@
 (yas-global-mode 1)
 
 ;; jedi
-(defun my/python-mode-hook() (add-to-list 'company-backends 'company-jedi))
-(add-hook 'python-mode-hook 'my/python-mode-hook)
+;; (defun my/python-mode-hook() (add-to-list 'company-backends 'company-jedi))
+;; (add-hook 'python-mode-hook 'my/python-mode-hook)
 
 ;; ivy mode
 (require 'ivy)
@@ -167,6 +165,7 @@
 (require 'projectile)
 (projectile-mode 1)
 (setq projectile-completion-system 'ivy)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (add-to-list 'projectile-other-file-alist '("cc" "h"))
 (add-to-list 'projectile-other-file-alist '("h" "cc"))
 (add-to-list 'projectile-globally-ignored-directories "bin")
@@ -213,7 +212,7 @@
                ("\\paragraph{%s}" . "\\paragraph*{%s}")
                ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-(require 'ess-site)
+;; (require 'ess-site)
 
 (require 'diminish)
 (diminish 'projectile-mode " P")
@@ -272,7 +271,9 @@
      ("pdf" . "evince %s"))))
  '(package-selected-packages
    (quote
-    (restclient ivy-hydra counsel yaxception w3m virtualenv swiper pyvirtualenv pyvenv python-pylint python-pep8 pylint pyflakes py-import-check pretty-symbols nose markdown-mode lua-mode latex-pretty-symbols latex-extra kivy-mode irony-eldoc iedit highlight-indentation graphviz-dot-mode gnuplot-mode gnuplot ghci-completion ggtags fuzzy flycheck-irony flycheck-haskell find-file-in-project ein dired+ diminish company-quickhelp company-math company-jedi company-irony-c-headers company-irony company-ghci company-ghc company-flx company-auctex))))
+    (vue-mode go-mode w3m lsp-java projectile lsp-python company-lsp lsp-intellij lsp-mode lsp-ui scala-mode restclient counsel swiper markdown-mode lua-mode latex-extra iedit graphviz-dot-mode find-file-in-project dired+ diminish company-quickhelp company-math company-flx company-auctex)))
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

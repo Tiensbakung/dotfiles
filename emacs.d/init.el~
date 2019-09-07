@@ -3,9 +3,8 @@
 ;;; Personal Emacs init.el
 ;;; Code:
 (setq package-archives '(
-                         ;; ("gnu" . "http://elpa.gnu.org/packages/")
-                         ;; ("marmalade" . "http://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "http://melpa.org/packages/")
                          ))
 
 ;; set emacs encoding
@@ -19,8 +18,8 @@
 
 ;; Show more info on the title
 (setq-default frame-title-format
-    (list invocation-name "@" system-name ":%b %+%+ %f"))
-
+    (list "[%b]: %+ %f"))
+    ;; (list invocation-name "@" system-name ":%b %+%+ %f"))
 
 (setq inhibit-startup-message t)          ;; Don't show GNU splash screen
 (setq-default make-backup-files nil)      ;; No backup file
@@ -271,7 +270,7 @@
      ("pdf" . "evince %s"))))
  '(package-selected-packages
    (quote
-    (vue-mode go-mode w3m lsp-java projectile lsp-python company-lsp lsp-intellij lsp-mode lsp-ui scala-mode restclient counsel swiper markdown-mode lua-mode latex-extra iedit graphviz-dot-mode find-file-in-project dired+ diminish company-quickhelp company-math company-flx company-auctex)))
+    (yasnippet-snippets vue-mode go-mode w3m lsp-java projectile lsp-python company-lsp lsp-intellij lsp-mode lsp-ui scala-mode restclient counsel swiper markdown-mode lua-mode latex-extra iedit graphviz-dot-mode find-file-in-project dired+ diminish company-quickhelp company-math company-flx company-auctex)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 
@@ -285,13 +284,8 @@
 (setq compilation-environment
       '("NTC_SDK_PATH=/tmp/SDK_Bovine_ntc_6200_2.0.24.3"
         "C8Y_LIB_PATH=/tmp/src/smartrest"))
-(setq-default flycheck-clang-language-standard "c++11")
 (add-hook 'c++-mode-hook
           (lambda () (setq flycheck-gcc-language-standard "c++11")))
-;; (setq-default flycheck-clang-include-path
-;;               '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
-;; (setq-default flycheck-gcc-include-path
-;;               '("/home/tiens/Workspace/omnetpp-4.4.1/include/"))
 
 (provide 'init)
 ;;; init.el ends here

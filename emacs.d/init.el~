@@ -69,9 +69,6 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (global-set-key [f5] 'recompile)
-;; (global-set-key (kbd "<f6>") 'semantic-ia-describe-class)
-;; (global-set-key (kbd "<f7>") 'semantic-ia-show-doc)
-;; (global-set-key (kbd "<f8>") 'semantic-ia-show-summary)
 
 
 ;; auto mode association
@@ -138,10 +135,6 @@
 ;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
-
-;; jedi
-;; (defun my/python-mode-hook() (add-to-list 'company-backends 'company-jedi))
-;; (add-hook 'python-mode-hook 'my/python-mode-hook)
 
 ;; ivy mode
 (require 'ivy)
@@ -244,6 +237,13 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(ansi-color-names-vector
+   ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ '(blink-cursor-mode nil)
+ '(column-number-mode t)
+ '(custom-enabled-themes (quote (light-blue)))
  '(doc-view-continuous t)
  '(ess-R-font-lock-keywords
    (quote

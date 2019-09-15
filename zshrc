@@ -11,11 +11,11 @@ PROMPT="%{$fg_bold[green]%}%n%{$reset_color%}@%{$fg_bold[blue]%}%m %{$fg_bold[cy
 
 distro=`lsb_release -si`
 if [[ $distro == "ManjaroLinux" ]]; then
-    alias us="yaourt -Syua"
-    alias ms="yaourt -Scc"
+    alias us="yay -Syua"
+    alias ms="yay -Scc"
 elif [[ $distro == "Arch" ]]; then
-    alias us="yaourt -Syua"
-    alias ms="yaourt -Scc"
+    alias us="yay -Syua"
+    alias ms="yay -Scc"
 elif [[ $distro == "LinuxMint" ]]; then
     alias us="sudo apt update && sudo apt -y full-upgrade"
     alias ms="sudo apt-get autoremove && sudo apt-get autoclean"

@@ -11,10 +11,10 @@ PROMPT="%{$fg_bold[green]%}%n%{$reset_color%}@%{$fg_bold[blue]%}%m %{$fg_bold[cy
 
 distro=`lsb_release -si`
 if [[ $distro == "ManjaroLinux" ]]; then
-    alias us="yay -Syua"
+    alias us="yay -Syu"
     alias ms="yay -Scc"
 elif [[ $distro == "Arch" ]]; then
-    alias us="yay -Syua"
+    alias us="yay -Syu"
     alias ms="yay -Scc"
 elif [[ $distro == "LinuxMint" ]]; then
     alias us="sudo apt update && sudo apt -y full-upgrade"

@@ -269,7 +269,13 @@ Setup w3m bookmark items in menubar.
 ;;;### (autoloads nil "w3m-bug" "w3m-bug.el" (0 0 0 0))
 ;;; Generated autoloads from w3m-bug.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "w3m-bug" '("report-emacs-w3m-bug")))
+(autoload 'report-emacs-w3m-bug "w3m-bug" "\
+Report a bug in emacs-w3m.
+Prompts for bug subject.  Leaves you in a mail buffer.
+
+\(fn TOPIC &optional BUFFER)" t nil)
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "w3m-bug" '("report-emacs-w3m-bug-")))
 
 ;;;***
 

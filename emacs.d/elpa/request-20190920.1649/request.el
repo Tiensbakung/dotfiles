@@ -6,7 +6,7 @@
 
 ;; Author: Takafumi Arakaki <aka.tkf at gmail.com>
 ;; URL: https://github.com/tkf/emacs-request
-;; Package-Version: 20190901.1539
+;; Package-Version: 20190920.1649
 ;; Package-Requires: ((emacs "24.4"))
 ;; Version: 0.3.0
 
@@ -1046,7 +1046,7 @@ removed from the buffer before it is shown to the parser function.
                     (setf (request-response--tempfiles response) tempfiles)
                     (apply #'request--curl-command url :files* files*
                            :response response :encoding encoding settings)))
-         (proc (apply #'start-file-process "request curl" buffer command)))
+         (proc (apply #'start-process "request curl" buffer command)))
     (request--install-timeout timeout response)
     (request-log 'debug "Run: %s" (mapconcat 'identity command " "))
     (setf (request-response--buffer response) buffer)
@@ -1182,11 +1182,9 @@ START-URL is the URL requested."
         (with-local-quit
           (cl-loop with iter = 0
                    until (or (>= iter 10) finished)
-                   if (request--process-live-p proc)
-                     do (accept-process-output proc 0.3)
-                   else
-                     do (cl-incf iter) and
-                     do (sleep-for 0 300)
+                   do (accept-process-output nil 0.3)
+                   unless (request--process-live-p proc)
+                     do (cl-incf iter)
                    end
                    finally (when (>= iter 10)
                              (request-log 'verbose

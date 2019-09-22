@@ -98,7 +98,6 @@
 (setq ibuffer-expert t)
 (add-hook 'ibuffer-mode-hook 'ibuffer-auto-mode t)
 
-(require 'dired+)
 (require 'ispell)
 ;; (which-function-mode t)
 ;; (global-flycheck-mode t)

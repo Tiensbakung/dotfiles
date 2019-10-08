@@ -32,3 +32,4 @@ fi
 export EDITOR="vim"
 export GOPATH=$HOME/Workspace/go
 export PATH=$PATH:$GOPATH/bin
+export HISTCONTROL=ignoreboth:erasedups

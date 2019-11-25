@@ -6,7 +6,7 @@
 
 ;; Author: Takafumi Arakaki <aka.tkf at gmail.com>
 ;; URL: https://github.com/tkf/emacs-request
-;; Package-Version: 20191114.1629
+;; Package-Version: 20191122.1416
 ;; Package-Requires: ((emacs "24.4"))
 ;; Version: 0.3.2
 
@@ -551,6 +551,7 @@ and requests.request_ (Python).
 .. _jQuery.ajax: http://api.jquery.com/jQuery.ajax/
 .. _requests.request: http://docs.python-requests.org
 "
+  (declare (indent defun))
   ;; FIXME: support CACHE argument (if possible)
   ;; (unless cache
   ;;   (setq url (request--url-no-cache url)))

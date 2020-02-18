@@ -4,7 +4,7 @@
 ;;   Phil Hagelberg, Doug Alcorn, Will Farrington, Chen Bin
 ;;
 ;; Version: 5.7.9
-;; Package-Version: 20200110.1353
+;; Package-Version: 20200217.20
 ;; Author: Phil Hagelberg, Doug Alcorn, and Will Farrington
 ;; Maintainer: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: https://github.com/technomancy/find-file-in-project
@@ -280,7 +280,6 @@ May be set using .dir-locals.el.  Checks each entry if set to a list.")
     "*/.tox"
     "*/.bzr"
     "*/.hg"
-    "*/bin"
     "*/.DS_Store"
     "*/.sass-cache"
     "*/.npm"
@@ -1023,7 +1022,8 @@ If OPEN-ANOTHER-WINDOW is not nil, the file will be opened in new window."
   (let* ((rlt (mapconcat 'identity ffip-prune-patterns "\\|")))
     (setq rlt (replace-regexp-in-string "\\." "\\\\." rlt))
     (setq rlt (replace-regexp-in-string "\\*" ".*" rlt))
-    rlt))
+    ;; file name or directory name
+    (concat rlt "\\($\\|/\\)" )))
 
 ;;;###autoload
 (defun ffip-lisp-find-file-in-project (&optional directory-p)
@@ -1049,7 +1049,7 @@ It's is written in pure Lisp, so it works in all environments."
     (setq cands
           (delq nil
                 (mapcar `(lambda (c)
-                           (unless (string-match-p ,ignored-regex c) c))
+                           (unless (string-match ,ignored-regex c) c))
                         cands)))
     (ffip-completing-read
      (format "%s %s: " (if directory-p "directories" "files") root)

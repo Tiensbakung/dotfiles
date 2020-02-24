@@ -23,3 +23,4 @@ eclipse.jdt.ls/
 workspace/
 image-dired
 *.elc
+.cache

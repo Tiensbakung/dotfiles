@@ -24,3 +24,4 @@ workspace/
 image-dired
 *.elc
 .cache
+emacs.d/pyim/dcache/

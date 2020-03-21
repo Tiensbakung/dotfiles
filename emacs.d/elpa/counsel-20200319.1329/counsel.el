@@ -4,7 +4,7 @@
 
 ;; Author: Oleh Krehel <ohwoeowho@gmail.com>
 ;; URL: https://github.com/abo-abo/swiper
-;; Package-Version: 20200314.2005
+;; Package-Version: 20200319.1329
 ;; Version: 0.13.0
 ;; Package-Requires: ((emacs "24.5") (swiper "0.13.0"))
 ;; Keywords: convenience, matching, tools
@@ -2014,7 +2014,7 @@ When INITIAL-INPUT is non-nil, use it in the minibuffer during completion."
 (defvar counsel-file-name-filter-alist
   '(("ag -i '%s'" . t)
     ("ack -i '%s'" . t)
-    ("perl -ne '/(%s.*)/i && print \"$1\\n\";'" . t)
+    ("perl -ne '/(.*%s.*)/i && print \"$1\\n\";'" . t)
     ("grep -i -E '%s'"))
   "Alist of file name filtering commands.
 The car is a shell command and the cdr is t when the shell

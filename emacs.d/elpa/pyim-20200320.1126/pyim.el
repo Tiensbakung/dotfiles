@@ -643,6 +643,13 @@ plist 来表示，比如：
 临时激活某种辅助输入法（比如：拼音输入法）来输入汉字。"
   :group 'pyim)
 
+(defcustom pyim-cregexp-fallback-scheme 'quanpin
+  "`pyim-cregexp-build' 使用的 Fallback scheme.
+
+如果 `pyim-cregexp-build' 无法支持用户正在使用的 scheme 时，
+将使用这个 scheme."
+  :group 'pyim)
+
 (defcustom pyim-schemes
   '((quanpin
      :document "全拼输入法方案（不可删除）。"
@@ -1291,6 +1298,10 @@ If you don't like this function, set the variable to nil")
 pyim 对资源的消耗。
 2. 自动更新功能无法正常工作，用户通过手工从其他机器上拷贝
 dcache 文件的方法让 pyim 正常工作。")
+
+(defvar pyim-prefer-personal-dcache t
+  "让 pyim 优先使用 personal dcache 里面的词条.
+这个选项暂时只影响 rime scheme.")
 
 (defvar pyim-page-tooltip-posframe-buffer " *pyim-page-tooltip-posframe-buffer*"
   "这个变量用来保存做为 page tooltip 的 posframe 的 buffer.")
@@ -2670,7 +2681,26 @@ IMOBJS 获得候选词条。"
          (s (if code-prefix (substring s 1) s))
          (words-2 (liberime-search s pyim-liberime-search-limit))
          words)
-    (setq words (remove nil `(,@words-1 ,@words-2)))
+    ;; rime 支持多种输入法，所以个人词条列表 words-1 中一个 code 可能
+    ;; 保存多种输入法对应的词条，这里使用 words-2 对其进行筛选，最大限
+    ;; 度的降低 "输入拼音出五笔词条" 类似的问题。 筛选规则很简单：如果
+    ;; words-1 中某个词条与 words-2 中某个词条相互匹配，就保留这个词条，
+    ;; 否则就删除此词条。
+    (setq words-1
+          (remove nil
+                  (mapcar (lambda (x)
+                            (when (cl-some
+                                   (lambda (y)
+                                     (and x y
+                                          (or (string-match-p x y)
+                                              (string-match-p y x))))
+                                   words-2)
+                              x))
+                          words-1)))
+    (setq words (remove nil
+                        (if pyim-prefer-personal-dcache
+                            `(,@words-1 ,@words-2)
+                          `(,@words-2 ,@words-1))))
     ;; 这个缓存用于加快 rime 多次选择上屏的速度。见
     ;; `pyim-liberime-get-code', 也许这是过早的优化。。。。
     ;; 未来也许应该重新考虑。
@@ -3467,19 +3497,46 @@ minibuffer 原来显示的信息和 pyim 选词框整合在一起显示
 `liberime-search' with LIMIT argument is used internal."
   (let* ((n (length word))
          (i (min (length input) (* n 5)))
-         words str result)
+         words str result1 result2)
     (while (> i 0)
       (setq str (substring input 0 i))
       (setq words
             (or (cdr (assoc str pyim-liberime-code-cache))
                 (liberime-search str limit)))
-      (if (and (= (length (car words)) n)
-               (member word words))
-          (setq i 0)
-        (setq i (- i 1))
-        (when (= i 0)
-          (setq str ""))))
-    str))
+      (when (and (= (length (car words)) n)
+                 (member word words))
+        (push str result1))
+      (when (member word words)
+        (push str result2))
+      (setq i (- i 1)))
+    (cond
+     ;; 不同的输入法处理方式也不一样，这里使用一套笨办法探测当前是什么
+     ;; 类型的输入法输入法：
+
+     ;; 1. input 的第一个字符，与 word 的第一个汉字拼音首字母对应。
+     ;; 2. 获取 "ziji" 对应的词条列表，词条列表中包含 “自己” 这个词。
+
+     ;; 如果符合上面两条规则，那么就可以大致判断，当前输入法可能是全屏
+     ;; 或者双拼。
+     ((and
+       (let ((szm (substring input 0 1))
+             (szm-list
+              (mapcar (lambda (x)
+                        (and (stringp x)
+                             (substring x 0 1)))
+                      (pyim-cchar2pinyin-get
+                       (substring word 0 1)))))
+         (if szm-list
+             (member szm szm-list)
+           ;; 如果 szm-list 为空，那说明待处理的汉字没有包含在 pyim-pymap
+           ;; 中，有可能是繁体字或者生僻字，直接放行。
+           t))
+       (member "自己" (liberime-search "ziji" limit)))
+      (or (car (reverse result1))
+          (car (reverse result2))))
+     (t
+      (or (car (reverse result2))
+          (car (reverse result1)))))))
 
 ;; (pyim-liberime-get-code "你好" "nihaoma")
 
@@ -3991,6 +4048,7 @@ PUNCT-LIST 格式类似：
 (defun pyim-cregexp-build-1 (str)
   (let* ((scheme-name (pyim-scheme-name))
          (class (pyim-scheme-get-option scheme-name :class))
+         (code-prefix (pyim-scheme-get-option scheme-name :code-prefix))
          (sep "#####&&&&#####")
          (lst (split-string
                (replace-regexp-in-string
@@ -4000,8 +4058,8 @@ PUNCT-LIST 格式类似：
     ;; 确保 pyim 词库加载
     (pyim-dcache-init-variables)
     ;; pyim 暂时只支持全拼和双拼搜索
-    (when (not (member class '(quanpin shuangpin)))
-      (setq scheme-name 'quanpin))
+    (when (not (member class '(quanpin shuangpin xingma)))
+      (setq scheme-name pyim-cregexp-fallback-scheme))
     (mapconcat
      (lambda (string)
        (if (or (pyim-string-match-p "[^a-z']+" string))
@@ -4017,7 +4075,9 @@ PUNCT-LIST 格式类似：
                 (regexp-list
                  (mapcar
                   #'(lambda (imobj)
-                      (pyim-cregexp-build:quanpin imobj))
+                      (if (eq class 'xingma)
+                          (pyim-cregexp-build:xingma imobj nil nil nil code-prefix)
+                        (pyim-cregexp-build:quanpin imobj)))
                   imobjs))
                 (regexp
                  (when regexp-list
@@ -4060,6 +4120,36 @@ PUNCT-LIST 格式类似：
                      cchar-list "")))
     (unless (equal regexp "")
       (concat (if match-beginning "^" "") regexp))))
+
+(defun pyim-cregexp-build:xingma (imobj &optional match-beginning
+                                        first-equal all-equal code-prefix)
+  "从 IMOBJ 创建一个搜索中文的 regexp."
+  (cl-flet ((build-regexp
+             (list)
+             (let* ((n (apply #'max (mapcar #'length list)))
+                    results)
+               (dotimes (i n)
+                 (push (format "[%s]%s"
+                               (mapconcat
+                                (lambda (x)
+                                  (if (> i (- (length x) 1))
+                                      ""
+                                    (char-to-string
+                                     (elt x i))))
+                                list "")
+                               (if (> i 0) "?" ""))
+                       results))
+               (mapconcat #'identity (reverse results) ""))))
+    (let ((regexp (mapconcat
+                   (lambda (x)
+                     (let ((code (concat (or code-prefix "")
+                                         (if first-equal
+                                             (substring x 0 1)
+                                           x))))
+                       (build-regexp (pyim-dcache-get code))))
+                   imobj "")))
+      (unless (equal regexp "")
+        (concat (if match-beginning "^" "") regexp)))))
 
 (defun pyim-isearch-search-fun ()
   "这个函数为 isearch 相关命令添加中文拼音搜索功能，

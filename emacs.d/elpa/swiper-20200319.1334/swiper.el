@@ -4,7 +4,7 @@
 
 ;; Author: Oleh Krehel <ohwoeowho@gmail.com>
 ;; URL: https://github.com/abo-abo/swiper
-;; Package-Version: 20200314.1959
+;; Package-Version: 20200319.1334
 ;; Version: 0.13.0
 ;; Package-Requires: ((emacs "24.5") (ivy "0.13.0"))
 ;; Keywords: matching
@@ -448,6 +448,7 @@ such as `scroll-conservatively' are set to a high value.")
     package-menu-mode
     rcirc-mode
     sauron-mode
+    sieve-mode
     treemacs-mode
     twittering-mode
     vc-dir-mode
@@ -1660,44 +1661,46 @@ When not running `swiper-isearch' already, start it."
         (cl-incf i))
       (nreverse res))))
 
+(defun swiper--isearch-init ()
+  "Initialize `swiper-isearch'."
+  (swiper--init)
+  (setq swiper--isearch-start-point (point))
+  (swiper-font-lock-ensure))
+
+(defun swiper--isearch-unwind ()
+  (swiper--cleanup)
+  (unless (or (eq ivy-exit 'done) swiper-stay-on-quit)
+    (goto-char swiper--opoint))
+  (isearch-clean-overlays)
+  (swiper--ensure-visible)
+  (unless (or (eq ivy-exit 'done) (string= ivy-text ""))
+    (cl-pushnew ivy-text swiper-history)))
+
 ;;;###autoload
 (defun swiper-isearch (&optional initial-input)
   "A `swiper' that's not line-based."
   (interactive)
-  (swiper--init)
-  (setq swiper--isearch-start-point (point))
-  (swiper-font-lock-ensure)
   (let ((ivy-fixed-height-minibuffer t)
         (cursor-in-non-selected-windows nil)
-        (swiper-min-highlight 1)
-        res)
-    (unwind-protect
-         (and
-          (setq res
-                (ivy-read
-                 "Swiper: "
-                 #'swiper-isearch-function
-                 :initial-input initial-input
-                 :keymap swiper-isearch-map
-                 :dynamic-collection t
-                 :require-match t
-                 :action #'swiper-isearch-action
-                 :re-builder #'swiper--re-builder
-                 :history 'swiper-history
-                 :extra-props (list :fname (buffer-file-name))
-                 :caller 'swiper-isearch))
-          (point))
-      (unless (or res swiper-stay-on-quit)
-        (goto-char swiper--opoint))
-      (isearch-clean-overlays)
-      (swiper--ensure-visible)
-      (unless (or res (string= ivy-text ""))
-        (cl-pushnew ivy-text swiper-history)))))
+        (swiper-min-highlight 1))
+    (ivy-read
+     "Swiper: "
+     #'swiper-isearch-function
+     :initial-input initial-input
+     :keymap swiper-isearch-map
+     :dynamic-collection t
+     :require-match t
+     :action #'swiper-isearch-action
+     :re-builder #'swiper--re-builder
+     :history 'swiper-history
+     :extra-props (list :fname (buffer-file-name))
+     :caller 'swiper-isearch)))
 
 (ivy-configure 'swiper-isearch
   :occur #'swiper-occur
+  :init-fn #'swiper--isearch-init
   :update-fn 'auto
-  :unwind-fn #'swiper--cleanup
+  :unwind-fn #'swiper--isearch-unwind
   :format-fn #'swiper-isearch-format-function)
 
 ;;;###autoload

@@ -1120,8 +1120,7 @@ is evaluated by the `w3m-goto-url' function."
 (defcustom w3m-after-cursor-move-hook
   '(w3m-highlight-current-anchor
     w3m-show-form-hint
-    w3m-print-this-url
-    w3m-auto-show)
+    w3m-print-this-url)
   "Hook run each time after the cursor moves in emacs-w3m buffers.
 This hook is called by the `w3m-check-current-position' function by
 way of `post-command-hook'."
@@ -1619,47 +1618,6 @@ It influences only when a new emacs-w3m buffer is created."
 		 (cons :format "%v" :indent 3
 		       (symbol :format "Parameter: %v")
 		       (sexp :format "%t: %v"))))
-
-(defcustom w3m-auto-show t
-  "Non-nil means provide the ability to horizontally scroll the window.
-Automatic horizontal scrolling is made when the point gets away from
-both ends of the window, but nothing occurs if `truncate-lines' is set
-to nil.
-
-This feature works with the specially made program in emacs-w3m; usual
-`auto-hscroll-mode', `automatic-hscrolling', `auto-show-mode' or
-`hscroll-mode' will all be invalidated in emacs-w3m buffers."
-  :group 'w3m
-  :type 'boolean)
-
-(defcustom w3m-horizontal-scroll-division 4
-  "Integer used by the program making the point certainly visible.
-The cursor definitely does not go missing even when it has been driven
-out of the window while wandering around anchors and forms in an
-emacs-w3m buffer.
-
-Suppose that the value of this variable is N.  When the point is
-outside the left of the window, emacs-w3m scrolls the window so that
-the point may be displayed on the position within 1/N of the width of
-the window from the left.  Similarly, when the point is outside the
-right of the window, emacs-w3m scrolls the window so that the point
-may be displayed on the position of 1/N of the width of the window
-from the right.
-
-This feature doesn't work if `w3m-auto-show' is nil.  The value must
-be a larger integer than 1."
-  :group 'w3m
-  :type '(integer :match (lambda (_widget _value) t)
-		  :value-to-internal
-		  (lambda (_widget value)
-		    (if (and (integerp value) (> value 1))
-			(prin1-to-string value) "4"))
-		  :value-to-external
-		  (lambda (_widget value)
-		    (setq value (condition-case nil
-				    (string-to-number value)
-				  (error 4)))
-		    (if (> value 1) value 4))))
 
 (defcustom w3m-show-error-information t
   "Non-nil means show an error information as a web page.
@@ -3667,9 +3625,11 @@ external `convert' program respectively."
 (defun w3m-fontify-images ()
   "Fontify img_alt strings of images in the buffer containing halfdump."
   (goto-char (point-min))
-  (let (upper start end help src1)
-    (while (re-search-forward "<\\(img_alt\\)[^>]+>" nil t)
-      (setq upper (string= (match-string 1) "IMG_ALT")
+  (let (hseq upper start end help src1)
+    (while (re-search-forward
+	    "<\\(img_alt\\)\\(?:[^>]+hseq=\"\\([0-9]+\\)\\)?[^>]+>" nil t)
+      (setq hseq (when (match-beginning 2) (string-to-number (match-string 2)))
+	    upper (string= (match-string 1) "IMG_ALT")
 	    start (match-beginning 0)
 	    end (match-end 0))
       (goto-char (match-end 1))
@@ -3698,7 +3658,8 @@ external `convert' program respectively."
 	   (t
 	    (setq help (format "img: %s" src))))
 	  (w3m-add-text-properties start end
-				   (list 'w3m-image src
+				   (list 'w3m-image-hseq hseq
+					 'w3m-image src
 					 'w3m-image-size
 					 (when (or width height)
 					   (cons width height))
@@ -3829,6 +3790,27 @@ off this option."
   :group 'w3m
   :type 'boolean)
 
+;; Note: third party software might not use `w3m-image-hseq'.
+(defsubst w3m-search-for-next-image-boundary (start &optional end)
+  "Search for the next image boundary within START and END.
+Return the boundary position or nil if not found.  Note that return
+END if it is non-nil even if the boundary is not found."
+  (or (next-single-property-change start 'w3m-image-hseq nil end)
+      (next-single-property-change start 'w3m-image nil end)))
+
+(defsubst w3m-search-for-previous-image-boundary (start)
+  "Search for the image boundary backward from START.
+Return the point or nil if not found."
+  (unless (= start (point-min))
+    (if ;; is the point not just the boundary?
+	(let ((img (get-text-property start 'w3m-image-hseq)))
+	  (and (equal img (get-text-property (1- start) 'w3m-image-hseq))
+	       (or img (equal (get-text-property start 'w3m-image)
+			      (get-text-property (1- start) 'w3m-image)))))
+	(or (previous-single-property-change start 'w3m-image-hseq)
+	    (previous-single-property-change start 'w3m-image))
+      start)))
+
 (defvar w3m-image-no-idle-timer nil)
 (defun w3m-toggle-inline-images-internal (status
 					  &optional no-cache url
@@ -3849,10 +3831,9 @@ If URL is specified, only the image with URL is toggled."
 	  (while (< (setq start
 			  (if (w3m-image end)
 			      end
-			    (next-single-property-change end 'w3m-image
-							 nil end-pos)))
+			    (w3m-search-for-next-image-boundary end end-pos)))
 		    end-pos)
-	    (setq end (or (next-single-property-change start 'w3m-image)
+	    (setq end (or (w3m-search-for-next-image-boundary start)
 			  (point-max))
 		  iurl (w3m-image start)
 		  size (get-text-property start 'w3m-image-size))
@@ -3940,10 +3921,10 @@ You are retrieving non-secure image(s).  Continue? ")
 	;; Remove.
 	(while (< (setq start (if (w3m-image end)
 				  end
-				(next-single-property-change end 'w3m-image
-							     nil end-pos)))
+				(w3m-search-for-next-image-boundary
+				 end end-pos)))
 		  end-pos)
-	  (setq end (or (next-single-property-change start 'w3m-image)
+	  (setq end (or (w3m-search-for-next-image-boundary start)
 			(point-max))
 		iurl (w3m-image start))
 	  ;; IMAGE-ALT-STRING DUMMY-STRING
@@ -3983,9 +3964,12 @@ non-nil, cached data will not be used."
 	  (setq begin (region-beginning)
 		end (region-end))
 	  (deactivate-mark)
+	  (when (get-text-property begin 'w3m-image)
+	    (setq begin (or (w3m-search-for-previous-image-boundary begin)
+			    (point-min))))
 	  (while (< p end)
-	    (setq p (next-single-property-change p 'w3m-image nil end))
-	    (when (and (< p end)
+	    (setq p (w3m-search-for-next-image-boundary p end))
+	    (when (and (<= p end)
 		       (setq iurl (w3m-image p))
 		       (not (assoc iurl toggle-list)))
 	      (setq toggle-list (cons (cons iurl p) toggle-list)))))
@@ -4006,8 +3990,11 @@ non-nil, cached data will not be used."
 			(if force (setq status 'off))
 			(w3m-toggle-inline-images-internal
 			 status no-cache url
-			 (or begin (point-min))
-			 (or end (point-max))))
+			 (or begin
+			     (w3m-search-for-previous-image-boundary (point))
+			     (point-min))
+			 (or end (w3m-search-for-next-image-boundary (point))
+			     (point-max))))
 		    (setq safe-regexp
 			  (get-text-property (point) 'w3m-safe-url-regexp))
 		    (if (or force
@@ -4015,8 +4002,11 @@ non-nil, cached data will not be used."
 			    (string-match safe-regexp url))
 			(w3m-toggle-inline-images-internal
 			 status no-cache url
-			 (or begin (point-min))
-			 (or end (point-max)))
+			 (or begin
+			     (w3m-search-for-previous-image-boundary (point))
+			     (point-min))
+			 (or end (w3m-search-for-next-image-boundary (point))
+			     (point-max)))
 		      (when (w3m-interactive-p)
 			(w3m-message "This image is considered to be unsafe;\
  use the prefix arg to force display"))))))))
@@ -4063,16 +4053,14 @@ variable is non-nil (default=t)."
 	   (when (setq url (get-text-property pos 'w3m-image))
 	     (unless (string-match safe-regexp url)
 	       (throw 'done nil))
-	     (setq pos (next-single-property-change pos 'w3m-image)))
+	     (setq pos (w3m-search-for-next-image-boundary pos)))
 	   (while (< pos end)
 	     (when (and
-		    (setq pos (next-single-property-change pos 'w3m-image
-							   nil end))
+		    (setq pos (w3m-search-for-next-image-boundary pos end))
 		    (setq url (get-text-property pos 'w3m-image)))
 	       (unless (string-match safe-regexp url)
 		 (throw 'done nil)))
-	     (setq pos (next-single-property-change pos 'w3m-image
-						    nil end)))
+	     (setq pos (w3m-search-for-next-image-boundary pos end)))
 	   t))))
     (if (or force
 	    status
@@ -4097,7 +4085,7 @@ variable is non-nil (default=t)."
 RATE is a number of percent used when resizing an image."
   (let* ((inhibit-read-only t)
 	 (start (point))
-	 (end (or (next-single-property-change start 'w3m-image)
+	 (end (or (w3m-search-for-next-image-boundary start)
 		  (point-max)))
 	 (iurl (w3m-image start))
 	 (size (get-text-property start 'w3m-image-size))
@@ -7756,7 +7744,6 @@ Return t if highlighting is successful."
 	  (progn
 	    (push hseq w3m-goto-anchor-hist)
 	    (goto-char pos)
-	    (w3m-horizontal-on-screen)
 	    (w3m-print-this-url)
 	    t)
 	(setq w3m-goto-anchor-hist nil)
@@ -7835,7 +7822,6 @@ Return t if highlighting is successful."
 	    (goto-char (or (text-property-any (point-min) pos
 					      'w3m-anchor-sequence hseq)
 			   pos))
-	    (w3m-horizontal-on-screen)
 	    (w3m-print-this-url)
 	    t)
 	(setq w3m-goto-anchor-hist nil)
@@ -7884,7 +7870,6 @@ Return t if highlighting is successful."
       (if (member (w3m-action (point)) w3m-goto-anchor-hist)
 	  (setq arg (1+ arg))
 	(push (w3m-action (point)) w3m-goto-anchor-hist)))
-    (w3m-horizontal-on-screen)
     (w3m-print-this-url)))
 
 (defun w3m-goto-previous-form ()
@@ -7921,16 +7906,16 @@ Return t if highlighting is successful."
       (if (member (w3m-action (point)) w3m-goto-anchor-hist)
 	  (setq arg (1+ arg))
 	(push (w3m-action (point)) w3m-goto-anchor-hist)))
-    (w3m-horizontal-on-screen)
     (w3m-print-this-url)))
 
 (defun w3m-goto-next-image ()
+  "Go to the bginning of the next image."
   ;; Move the point to the end of the current image.
   (when (w3m-image (point))
-    (goto-char (next-single-property-change (point) 'w3m-image)))
-  ;; Find the next form or image.
+    (goto-char (w3m-search-for-next-image-boundary (point))))
+  ;; Find the next image.
   (or (w3m-image (point))
-      (let ((pos (next-single-property-change (point) 'w3m-image)))
+      (let ((pos (w3m-search-for-next-image-boundary (point))))
 	(when pos
 	  (goto-char pos)
 	  t))))
@@ -7939,63 +7924,40 @@ Return t if highlighting is successful."
   "Move the point to the next image."
   (interactive "p")
   (unless arg (setq arg 1))
-  (if (null (memq last-command
-		  '(w3m-next-image w3m-previous-image)))
-      (when (setq w3m-goto-anchor-hist (w3m-image (point)))
-	(setq w3m-goto-anchor-hist (list w3m-goto-anchor-hist)))
-    (when (and (eq last-command 'w3m-previous-image)
-	       w3m-goto-anchor-hist)
-      (setcdr w3m-goto-anchor-hist nil)))
   (if (< arg 0)
       (w3m-previous-image (- arg))
     (while (> arg 0)
       (unless (w3m-goto-next-image)
 	;; Make a search for an image from the beginning of the buffer.
-	(setq w3m-goto-anchor-hist nil)
 	(goto-char (point-min))
 	(w3m-goto-next-image))
-      (setq arg (1- arg))
-      (if (member (w3m-image (point)) w3m-goto-anchor-hist)
-	  (setq arg (1+ arg))
-	(push (w3m-image (point)) w3m-goto-anchor-hist)))
-    (w3m-horizontal-on-screen)
+      (setq arg (1- arg)))
     (w3m-print-this-url)))
 
 (defun w3m-goto-previous-image ()
+  "Go to the bginning of the previous image."
   ;; Move the point to the beginning of the current image.
   (when (w3m-image (point))
-    (goto-char (previous-single-property-change (1+ (point))
-						'w3m-image)))
-  ;; Find the previous form or image.
-  (let ((pos (previous-single-property-change (point) 'w3m-image)))
+    (goto-char (w3m-search-for-previous-image-boundary (1+ (point)))))
+  ;; Find the previous image.
+  (let ((pos (w3m-search-for-previous-image-boundary (point))))
     (if pos
 	(goto-char
 	 (if (w3m-image pos) pos
-	   (previous-single-property-change pos 'w3m-image))))))
+	   (w3m-search-for-previous-image-boundary pos))))))
 
 (defun w3m-previous-image (&optional arg)
   "Move the point to the previous image."
   (interactive "p")
   (unless arg (setq arg 1))
-  (if (null (memq last-command '(w3m-next-image w3m-previous-image)))
-      (when (setq w3m-goto-anchor-hist (w3m-image (point)))
-	(setq w3m-goto-anchor-hist (list w3m-goto-anchor-hist)))
-    (when (and (eq last-command 'w3m-next-image)
-	       w3m-goto-anchor-hist)
-      (setcdr w3m-goto-anchor-hist nil)))
   (if (< arg 0)
       (w3m-next-image (- arg))
     (while (> arg 0)
       (unless (w3m-goto-previous-image)
 	;; Make a search from the end of the buffer.
-	(setq w3m-goto-anchor-hist nil)
 	(goto-char (point-max))
 	(w3m-goto-previous-image))
-      (setq arg (1- arg))
-      (if (member (w3m-image (point)) w3m-goto-anchor-hist)
-	  (setq arg (1+ arg))
-	(push (w3m-image (point)) w3m-goto-anchor-hist)))
-    (w3m-horizontal-on-screen)
+      (setq arg (1- arg)))
     (w3m-print-this-url)))
 
 (defun w3m-copy-buffer (&optional buffer new-name background empty last)
@@ -9023,8 +8985,6 @@ or a list which consists of the following elements:
   (set (make-local-variable 'nobreak-char-display) nil)
   (setq	truncate-lines t
 	w3m-display-inline-images w3m-default-display-inline-images)
-  (when w3m-auto-show
-    (set (make-local-variable 'auto-hscroll-mode) nil))
   (setq show-trailing-whitespace nil)
   (set (make-local-variable 'mwheel-scroll-up-function) #'w3m-scroll-up)
   (set (make-local-variable 'mwheel-scroll-down-function) #'w3m-scroll-down)
@@ -9170,26 +9130,6 @@ Otherwise, it defaults to `w3m-horizontal-shift-columns'."
 (defvar w3m-current-position '(-1 0 0))
 (make-variable-buffer-local 'w3m-current-position)
 
-(defun w3m-auto-show ()
-  "Scroll horizontally so that the point is visible."
-  (when (and truncate-lines
-	     w3m-auto-show
-	     (not w3m-horizontal-scroll-done)
-	     (not (and (eq last-command this-command)
-		       (or (eq (point) (point-min))
-			   (eq (point) (point-max)))))
-	     (or (memq this-command '(beginning-of-buffer end-of-buffer))
-		 (and (symbolp this-command)
-		      (string-match "\\`i?search-" (symbol-name this-command)))
-		 (and (markerp (nth 1 w3m-current-position))
-		      (markerp (nth 2 w3m-current-position))
-		      (>= (point)
-			  (marker-position (nth 1 w3m-current-position)))
-		      (<= (point)
-			  (marker-position (nth 2 w3m-current-position))))))
-    (w3m-horizontal-on-screen))
-  (setq w3m-horizontal-scroll-done nil))
-
 (defun w3m-horizontal-scroll (direction ncol)
   "Scroll the window NCOL columns horizontally to DIRECTION.
 DIRECTON should be the symbol `left' which specifies to scroll to the
@@ -9202,32 +9142,7 @@ commands `w3m-scroll-left', `w3m-scroll-right', `w3m-shift-left' and
     (set-window-hscroll nil
 			(max 0
 			     (+ (window-hscroll)
-				(if (eq direction 'left) ncol (- ncol)))))
-    (let ((hs (window-hscroll)))
-      (unless (and (>= (- (current-column) hs) 0)
-		   (< (- (current-column) hs) (window-width)))
-	(move-to-column (if (eq direction 'left)
-			    hs
-			  (+ hs (window-width) -2)))))))
-
-(defun w3m-horizontal-on-screen ()
-  "Scroll the window horizontally so that the current position is visible.
-See the documentation for the `w3m-horizontal-scroll-division' variable
-for details."
-  (when w3m-auto-show
-    (setq w3m-horizontal-scroll-done t)
-    (let ((cc (current-column))
-	  (hs (window-hscroll))
-	  (ww (window-width))
-	  (inhibit-point-motion-hooks t))
-      (unless (and (>= (- cc hs) 0)
-		   (< (+ (- cc hs) (if (eolp) 0 2)) ww))
-	(set-window-hscroll
-	 nil
-	 (max 0 (- cc (if (> hs cc)
-			  (/ ww w3m-horizontal-scroll-division)
-			(* (/ ww w3m-horizontal-scroll-division)
-			   (1- w3m-horizontal-scroll-division))))))))))
+				(if (eq direction 'left) ncol (- ncol)))))))
 
 (defun w3m-horizontal-recenter (&optional arg)
   "Recenter horizontally.  With ARG, put the point on the column ARG.

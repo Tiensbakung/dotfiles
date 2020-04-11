@@ -49,14 +49,17 @@ Explain a clang-tidy ERROR by scraping documentation from llvm.org.
 ;;;### (autoloads nil "lsp-dart" "lsp-dart.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-dart.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dart" '("lsp-dart-")))
+(autoload 'lsp-dart-show-outline "lsp-dart" "\
+Shows an outline tree and focus on it if IGNORE-FOCUS? is null.
 
-;;;***
-
-;;;### (autoloads nil "lsp-dls" "lsp-dls.el" (0 0 0 0))
-;;; Generated autoloads from lsp-dls.el
+\(fn IGNORE-FOCUS\\=\\?)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dls" '("lsp-dls-")))
+(autoload 'lsp-dart-show-flutter-outline "lsp-dart" "\
+Shows a Flutter outline tree and focus on it if IGNORE-FOCUS? is null.
+
+\(fn IGNORE-FOCUS\\=\\?)" t nil)
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-dart" '("lsp-dart-" "treemacs-")))
 
 ;;;***
 

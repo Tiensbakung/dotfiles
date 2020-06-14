@@ -4,8 +4,8 @@
 
 ;; Author: Oleh Krehel <ohwoeowho@gmail.com>
 ;; URL: https://github.com/abo-abo/swiper
-;; Package-Version: 20200605.1329
-;; Package-Commit: 39ede5fbefd91efae86fd7158aa95ffddc7b9148
+;; Package-Version: 20200613.1920
+;; Package-Commit: f8b1ab8c0ec331a4f8f6621f9021811075c71332
 ;; Version: 0.13.0
 ;; Package-Requires: ((emacs "24.5") (swiper "0.13.0"))
 ;; Keywords: convenience, matching, tools
@@ -886,7 +886,8 @@ packages are, in order of precedence, `amx' and `smex'."
 
 (defun counsel-M-x-action (cmd)
   "Execute CMD."
-  (setq cmd (intern (string-remove-prefix "^" cmd)))
+  (setq cmd (intern
+             (subst-char-in-string ?\s ?- (string-remove-prefix "^" cmd))))
   (cond ((bound-and-true-p amx-initialized)
          (amx-rank cmd))
         ((bound-and-true-p smex-initialized-p)
@@ -4740,7 +4741,7 @@ An extra action allows to switch to the process buffer."
              counsel-slime-repl-history--index-last snd)))
     (ivy-completion-in-region-action (car pair))))
 
-(defun counsel--browse-history (ring &key caller)
+(cl-defun counsel--browse-history (ring &key caller)
   "Use Ivy to navigate through RING."
   (let* ((proc (get-buffer-process (current-buffer)))
          (end (point))

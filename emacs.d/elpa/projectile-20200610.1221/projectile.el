@@ -4,10 +4,10 @@
 
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: https://github.com/bbatsov/projectile
-;; Package-Version: 20200517.1330
-;; Package-Commit: 7e552b6d876014ca5b4609318ca8a202b2a89014
+;; Package-Version: 20200610.1221
+;; Package-Commit: d7baa74eaa32cbed5d003a39a2687fa168cc4126
 ;; Keywords: project, convenience
-;; Version: 2.2.0-snapshot
+;; Version: 2.3.0-snapshot
 ;; Package-Requires: ((emacs "25.1") (pkg-info "0.4"))
 
 ;; This file is NOT part of GNU Emacs.

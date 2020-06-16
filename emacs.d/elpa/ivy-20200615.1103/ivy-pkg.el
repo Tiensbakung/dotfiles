@@ -1,6 +1,6 @@
-(define-package "ivy" "20200613.1920" "Incremental Vertical completYon"
+(define-package "ivy" "20200615.1103" "Incremental Vertical completYon"
   '((emacs "24.5"))
-  :commit "f8b1ab8c0ec331a4f8f6621f9021811075c71332" :keywords
+  :commit "a007ba637d6c6e232fb894e10a40cfc1142a24ae" :keywords
   '("matching")
   :authors
   '(("Oleh Krehel" . "ohwoeowho@gmail.com"))

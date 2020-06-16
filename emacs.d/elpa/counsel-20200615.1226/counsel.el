@@ -4,8 +4,8 @@
 
 ;; Author: Oleh Krehel <ohwoeowho@gmail.com>
 ;; URL: https://github.com/abo-abo/swiper
-;; Package-Version: 20200613.1920
-;; Package-Commit: f8b1ab8c0ec331a4f8f6621f9021811075c71332
+;; Package-Version: 20200615.1226
+;; Package-Commit: a007ba637d6c6e232fb894e10a40cfc1142a24ae
 ;; Version: 0.13.0
 ;; Package-Requires: ((emacs "24.5") (swiper "0.13.0"))
 ;; Keywords: convenience, matching, tools
@@ -3071,7 +3071,7 @@ Works for `counsel-git-grep', `counsel-ag', etc."
                  (lambda (x) (if (string= x "%s") (copy-sequence all-args) (list x)))
                  cmd-template)))))
          (cands (counsel--split-string
-                 (if (stringp cmd-template)
+                 (if (stringp cmd)
                      (shell-command-to-string cmd)
                    (counsel--call cmd)))))
     (swiper--occur-insert-lines (mapcar #'counsel--normalize-grep-match cands))))

@@ -719,7 +719,8 @@ are determined by the index of the element."
 
 (defcustom lsp-imenu-index-symbol-kinds nil
   "Which symbol kinds to show in imenu."
-  :type '(repeat (choice (const :tag "File" File)
+  :type '(repeat (choice (const :tag "Miscellaneous" nil)
+                         (const :tag "File" File)
                          (const :tag "Module" Module)
                          (const :tag "Namespace" Namespace)
                          (const :tag "Package" Package)
@@ -1371,12 +1372,31 @@ INHERIT-INPUT-METHOD will be proxied to `completing-read' without changes."
      (with-current-buffer ,buffer-id
        ,@body)))
 
+(defvar lsp--throw-on-input nil
+  "Make `lsp-*-while-no-input' throws `input' on interrupted.")
+
+(defmacro lsp--catch (tag bodyform &rest handlers)
+  "Catch TAG thrown in BODYFORM.
+The return value from TAG will be handled in HANDLERS by `pcase'."
+  (declare (debug (form form &rest (pcase-PAT body))) (indent 2))
+  (let ((re-sym (make-symbol "re")))
+    `(let ((,re-sym (catch ,tag ,bodyform)))
+       (pcase ,re-sym
+         ,@handlers))))
+
 (defmacro lsp--while-no-input (&rest body)
-  "Run BODY and return value while there's no input.
-If it's interrupt by input, return nil.
-BODY should never return `t' value."
-  `(let ((re (while-no-input ,@body)))
-     (unless (booleanp re) re)))
+  "Wrap BODY in `while-no-input' and respecting `non-essential'.
+If `lsp--throw-on-input' is set, will throw if input is pending, else
+return value of `body' or nil if interrupted."
+  (declare (debug t) (indent 0))
+  `(if non-essential
+       (let ((res (while-no-input ,@body)))
+         (cond
+          ((and lsp--throw-on-input (equal res t))
+           (throw 'input :interrupted))
+          ((booleanp res) nil)
+          (t res)))
+     ,@body))
 
 ;; A ‘lsp--client’ object describes the client-side behavior of a language
 ;; server.  It is used to start individual server processes, each of which is
@@ -2941,7 +2961,8 @@ If NO-WAIT is non-nil send the request as notification."
           (lsp-cancel-request-by-token :sync-request))))))
 
 (cl-defun lsp-request-while-no-input (method params)
-  "Send request METHOD with PARAMS and waits until there is no input."
+  "Send request METHOD with PARAMS and waits until there is no input.
+Return same value as `lsp--while-no-input' and respecting `non-essential'."
   (let* (resp-result resp-error done?)
     (unwind-protect
         (progn
@@ -2951,15 +2972,16 @@ If NO-WAIT is non-nil send the request as notification."
                              :error-handler (lambda (err) (setf resp-error err))
                              :mode 'detached
                              :cancel-token :sync-request)
-          (while (and (not (or resp-error resp-result))
-                      (not (input-pending-p)))
+          (while (not (or resp-error resp-result
+                          (and non-essential (input-pending-p))))
             (accept-process-output nil 0.001))
           (setq done? t)
           (cond
            ((eq resp-result :finished) nil)
            (resp-result resp-result)
            ((lsp-json-error? resp-error) (error (lsp:json-error-message resp-error)))
-           ((input-pending-p) nil)
+           ((input-pending-p) (when lsp--throw-on-input
+                                (throw 'input :interrupted)))
            (t (error (lsp:json-error-message (cl-first resp-error))))))
       (unless done?
         (lsp-cancel-request-by-token :sync-request)))))
@@ -6164,12 +6186,17 @@ an alist
       (cons name
             (lsp--imenu-create-hierarchical-index filtered-children)))))
 
-(lsp-defun lsp--symbol-filter ((&SymbolInformation :kind :location))
+(lsp-defun lsp--symbol-ignore ((&SymbolInformation :kind :location))
   "Determine if SYM is for the current document and is to be shown."
   ;; It's a SymbolInformation or DocumentSymbol, which is always in the
   ;; current buffer file.
   (or (and lsp-imenu-index-symbol-kinds
-           (not (memql (aref lsp/symbol-kind-lookup kind) lsp-imenu-index-symbol-kinds)))
+           (numberp kind)
+           (let ((clamped-kind (if (< 0 kind (length lsp/symbol-kind-lookup))
+                                   kind
+                                 0)))
+             (not (memql (aref lsp/symbol-kind-lookup clamped-kind)
+                         lsp-imenu-index-symbol-kinds))))
       (and location
            (not (eq (->> location
                          (lsp:location-uri)
@@ -6242,7 +6269,7 @@ representation to point representation."
 
 (defun lsp--imenu-filter-symbols (symbols)
   "Filter out unsupported symbols from SYMBOLS."
-  (seq-remove #'lsp--symbol-filter symbols))
+  (seq-remove #'lsp--symbol-ignore symbols))
 
 (defun lsp--imenu-hierarchical-p (symbols)
   "Determine whether any element in SYMBOLS has children."

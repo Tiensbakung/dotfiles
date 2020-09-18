@@ -4,8 +4,8 @@
 
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: https://github.com/bbatsov/projectile
-;; Package-Version: 20200914.436
-;; Package-Commit: f7eb5f264e85e6ae13c5e5217fd42cdded4d4749
+;; Package-Version: 20200916.814
+;; Package-Commit: 7b6ac286120421216faae43f9e234d801a30ee3d
 ;; Keywords: project, convenience
 ;; Version: 2.3.0-snapshot
 ;; Package-Requires: ((emacs "25.1") (pkg-info "0.4"))
@@ -3433,7 +3433,12 @@ regular expression."
            (tags-exclude (projectile-tags-exclude-patterns))
            (default-directory project-root)
            (tags-file (expand-file-name projectile-tags-file-name))
-           (command (format projectile-tags-command tags-file tags-exclude default-directory))
+           (command (format projectile-tags-command
+                            tags-file
+                            tags-exclude
+                            ;; Use directory file name for MSYS2 compatibility.
+                            ;; See https://github.com/bbatsov/projectile/issues/1377 for more details
+                            (directory-file-name default-directory)))
            shell-output exit-code)
       (with-temp-buffer
         (setq exit-code

@@ -352,7 +352,7 @@ unless overridden by a more specific face association."
          lsp-crystal lsp-csharp lsp-css lsp-dart lsp-dhall lsp-dockerfile lsp-elm
          lsp-elixir lsp-erlang lsp-eslint lsp-fortran lsp-fsharp lsp-gdscript lsp-go
          lsp-hack lsp-groovy lsp-haskell lsp-haxe lsp-java lsp-javascript lsp-json
-         lsp-kotlin lsp-lua lsp-nim lsp-metals lsp-ocaml lsp-perl lsp-php lsp-pwsh
+         lsp-kotlin lsp-lua lsp-nim lsp-nix lsp-metals lsp-ocaml lsp-perl lsp-php lsp-pwsh
          lsp-pyls lsp-python-ms lsp-purescript lsp-r lsp-rf lsp-rust lsp-solargraph
          lsp-tex lsp-terraform lsp-verilog lsp-vetur lsp-vhdl lsp-vimscript lsp-xml
          lsp-yaml lsp-sqls lsp-svelte)
@@ -3242,9 +3242,11 @@ disappearing, unset all the variables related to it."
                       ,@(when lsp-enable-semantic-highlighting
                           `((semanticTokens
                              . ((dynamicRegistration . t)
+                                (requests . ((range . t) (full . t)))
                                 (tokenModifiers . ,(if lsp-semantic-tokens-apply-modifiers
                                                        (apply 'vector (mapcar #'car lsp-semantic-token-modifier-faces)) []))
-                                (tokenTypes . ,(apply 'vector (mapcar #'car lsp-semantic-token-faces)))))))
+                                (tokenTypes . ,(apply 'vector (mapcar #'car lsp-semantic-token-faces)))
+                                (formats . ["relative"])))))
                       (rename . ((dynamicRegistration . t) (prepareSupport . t)))
                       (codeAction . ((dynamicRegistration . t)
                                      (isPreferredSupport . t)

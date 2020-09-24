@@ -4,7 +4,8 @@
 ;;   Phil Hagelberg, Doug Alcorn, Will Farrington, Chen Bin
 ;;
 ;; Version: 5.7.10
-;; Package-Version: 20200227.1204
+;; Package-Version: 20200924.305
+;; Package-Commit: c52a11e0736abcf047b1572c0f40917546c09d48
 ;; Author: Phil Hagelberg, Doug Alcorn, and Will Farrington
 ;; Maintainer: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: https://github.com/technomancy/find-file-in-project
@@ -1146,10 +1147,11 @@ Keyword to search new file is selected text or user input."
   "File file(s) in current hunk.
 If OPEN-ANOTHER-WINDOW is not nil, the file will be opened in new window."
   (interactive "P")
-  (let* ((files (mapcar 'file-name-nondirectory (diff-hunk-file-names)))
+  (let* ((files (mapcar (lambda (f) (replace-regexp-in-string "^[^/]*/" "" f)) (diff-hunk-file-names)))
          (alnum 0)
          (blnum 0)
-         (regex "\\(?:\\*\\{15\\}.*\n\\)?[-@* ]*\\([0-9,]+\\)\\([ acd+]+\\([0-9,]+\\)\\)?"))
+         (regex "\\(?:\\*\\{15\\}.*\n\\)?[-@* ]*\\([0-9,]+\\)\\([ acd+]+\\([0-9,]+\\)\\)?")
+         (ffip-match-path-instead-of-filename t))
 
     (save-excursion
       (diff-beginning-of-hunk t)

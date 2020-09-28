@@ -4,7 +4,8 @@
 ;;; Code:
 (setq package-archives '(
                          ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")
+                         ;; ("melpa" . "http://melpa.org/packages/")
+                         ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
                          ))
 
 ;; set emacs encoding
@@ -85,13 +86,14 @@
 ;; (add-hook 'java-mode-hook (lambda () (setq c-basic-offset 4)))
 (setq default-directory "~/Workspace/")
 
-(package-initialize)
+;; (package-initialize)
 
-(add-hook 'LaTeX-mode-hook 'TeX-fold-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc)
-(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+(setf epa-pinentry-mode 'loopback)
+
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-decl-scan)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc)
+;; (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
 
 ;; ibuffer
 (require 'ibuffer)
@@ -113,7 +115,6 @@
 
 ;; lsp mode
 (require 'lsp-mode)
-(require 'lsp-clients)
 (require 'lsp-java)
 (require 'lsp-ui)
 ;; (setq lsp-prefer-flymake nil)
@@ -122,14 +123,22 @@
 (add-hook 'c-mode-hook #'lsp)
 (add-hook 'c++-mode-hook #'lsp)
 ;; (add-hook 'go-mode-hook #'lsp)
+(setq lsp-modeline-code-actions-mode t)
+(setq lsp-headerline-breadcrumb-enable 1)
 
 ;; company mode
 (require 'company)
 (setq company-dabbrev-downcase nil)
-(setq company-backends (delete 'company-semantic company-backends))
+;; (setq company-backends (delete 'company-semantic company-backends))
 ;; (add-to-list 'company-backends 'company-irony)
 ;; (add-to-list 'company-backends 'company-irony-c-headers)
 (add-hook 'after-init-hook 'global-company-mode)
+
+;; pyim
+(require 'pyim)
+(require 'pyim-basedict)
+(pyim-basedict-enable)
+(setq default-input-method "pyim")
 
 ;; Yasnippet
 (require 'yasnippet)
@@ -163,6 +172,7 @@
 (add-to-list 'projectile-globally-ignored-directories "lib")
 (add-to-list 'projectile-globally-ignored-directories "build")
 (add-to-list 'projectile-globally-ignored-directories "doc")
+(add-to-list 'projectile-globally-ignored-directories "target")
 
 ;; org
 (require 'org)
@@ -242,11 +252,10 @@
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  '(blink-cursor-mode nil)
  '(column-number-mode t)
- '(custom-enabled-themes (quote (light-blue)))
+ '(custom-enabled-themes '(light-blue))
  '(doc-view-continuous t)
  '(ess-R-font-lock-keywords
-   (quote
-    ((ess-R-fl-keyword:modifiers . t)
+   '((ess-R-fl-keyword:modifiers . t)
      (ess-R-fl-keyword:fun-defs . t)
      (ess-R-fl-keyword:keywords . t)
      (ess-R-fl-keyword:assign-ops . t)
@@ -256,20 +265,18 @@
      (ess-fl-keyword:operators . t)
      (ess-fl-keyword:delimiters . t)
      (ess-fl-keyword:= . t)
-     (ess-R-fl-keyword:F&T . t))))
+     (ess-R-fl-keyword:F&T . t)))
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-remove-import-lines t)
- '(org-agenda-files (quote ("~/Workspace/org")))
+ '(org-agenda-files '("~/Workspace/org"))
  '(org-file-apps
-   (quote
-    ((auto-mode . emacs)
+   '((auto-mode . emacs)
      ("\\.mm\\'" . default)
      ("\\.x?html?\\'" browse-url file)
-     ("pdf" . "evince %s"))))
+     ("pdf" . "evince %s")))
  '(package-selected-packages
-   (quote
-    (yasnippet-snippets vue-mode go-mode w3m lsp-java projectile lsp-python company-lsp lsp-intellij lsp-mode lsp-ui scala-mode restclient counsel swiper markdown-mode lua-mode latex-extra iedit graphviz-dot-mode find-file-in-project dired+ diminish company-quickhelp company-math company-flx company-auctex)))
+   '(pyim pyim-basedict lsp-ui projectile yasnippet-snippets go-mode w3m lsp-java lsp-python lsp-intellij lsp-mode scala-mode restclient counsel swiper markdown-mode iedit graphviz-dot-mode find-file-in-project diminish company-quickhelp company-flx))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 

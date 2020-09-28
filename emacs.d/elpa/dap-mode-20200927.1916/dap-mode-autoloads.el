@@ -82,6 +82,14 @@ Run `dap-hydra/body'." t nil)
 ;;;### (autoloads nil "dap-mode" "dap-mode.el" (0 0 0 0))
 ;;; Generated autoloads from dap-mode.el
 
+(autoload 'dap-debug "dap-mode" "\
+Run debug configuration DEBUG-ARGS.
+
+If DEBUG-ARGS is not specified the configuration is generated
+after selecting configuration template.
+
+\(fn DEBUG-ARGS)" t nil)
+
 (defvar dap-mode nil "\
 Non-nil if Dap mode is enabled.
 See the `dap-mode' command

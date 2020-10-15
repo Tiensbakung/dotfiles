@@ -1,4 +1,4 @@
-(define-package "dap-mode" "20201009.2015" "Debug Adapter Protocol mode"
+(define-package "dap-mode" "20201013.614" "Debug Adapter Protocol mode"
   '((emacs "26.1")
     (dash "2.14.1")
     (lsp-mode "6.0")
@@ -8,7 +8,7 @@
     (s "1.12.0")
     (lsp-treemacs "0.1")
     (posframe "0.7.0"))
-  :commit "400ec52d32adc7dc0d736dc42ed1bacb8fd7ae14" :keywords
+  :commit "2d861a3620c7239072e00419aa99efb5c60d58e4" :keywords
   '("languages" "debug")
   :authors
   '(("Ivan Yonchovski" . "yyoncho@gmail.com"))

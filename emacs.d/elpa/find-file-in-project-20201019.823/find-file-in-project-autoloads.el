@@ -240,6 +240,13 @@ If REVERSE is t, applied patch is reverted.
 
 \(fn &optional REVERSE)" t nil)
 
+(autoload 'ffip-fix-file-path-at-point "find-file-in-project" "\
+Fix file path at point.
+If ABSOLUTE-PATH-P is t, old path is replaced by correct absolute path.
+Or else it's replaced by relative path.
+
+\(fn &optional ABSOLUTE-PATH-P)" t nil)
+
 (if (fboundp 'register-definition-prefixes) (register-definition-prefixes "find-file-in-project" '("ffip-" "find-relative-path")))
 
 ;;;***

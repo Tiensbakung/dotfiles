@@ -315,7 +315,7 @@ When ARG is t the lsp mode will start new language server even if
 there is language server which can handle current language. When
 ARG is nil current file will be opened in multi folder language
 server if there is such. When `lsp' is called with prefix
-argument ask the user to select which language server to start. 
+argument ask the user to select which language server to start.
 
 \(fn &optional ARG)" t nil)
 

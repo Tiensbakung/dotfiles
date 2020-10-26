@@ -1,10 +1,11 @@
 ;;; swiper.el --- Isearch with an overview. Oh, man! -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015-2019  Free Software Foundation, Inc.
+;; Copyright (C) 2015-2020  Free Software Foundation, Inc.
 
 ;; Author: Oleh Krehel <ohwoeowho@gmail.com>
 ;; URL: https://github.com/abo-abo/swiper
-;; Package-Version: 20200503.1102
+;; Package-Version: 20201023.1053
+;; Package-Commit: 49f9d662a42d51db39b6a84c3fd1d78ca8c5103d
 ;; Version: 0.13.0
 ;; Package-Requires: ((emacs "24.5") (ivy "0.13.0"))
 ;; Keywords: matching
@@ -965,8 +966,9 @@ the face, window and priority of the overlay."
                     (setq swiper--current-line num))
                   (when (re-search-forward re (line-end-position) t)
                     (setq swiper--current-match-start (match-beginning 0))))
-                (isearch-range-invisible (line-beginning-position)
-                                         (line-end-position))
+                (funcall isearch-filter-predicate
+                         (line-beginning-position)
+                         (line-end-position))
                 (swiper--maybe-recenter)))
             (swiper--add-overlays
              re
@@ -1215,8 +1217,9 @@ otherwise continue prompting for buffers."
           (re-search-forward
            (ivy--regex ivy-text)
            (line-end-position) t)
-          (isearch-range-invisible (line-beginning-position)
-                                   (line-end-position))
+          (funcall isearch-filter-predicate
+                   (line-beginning-position)
+                   (line-end-position))
           (unless (eq ivy-exit 'done)
             (swiper--cleanup)
             (swiper--add-overlays (ivy--regex ivy-text))))))))
@@ -1339,8 +1342,9 @@ See `ivy-format-functions-alist' for further information."
         (with-ivy-window
           (switch-to-buffer buffer-name)
           (goto-char (get-text-property 0 'point x))
-          (isearch-range-invisible (line-beginning-position)
-                                   (line-end-position))
+          (funcall isearch-filter-predicate
+                   (line-beginning-position)
+                   (line-end-position))
           (unless (eq ivy-exit 'done)
             (swiper--cleanup)
             (swiper--add-overlays (ivy--regex ivy-text))))))))
@@ -1484,7 +1488,7 @@ that we search only for one character."
                             (eq last-command 'ivy-previous-line-or-history)))
                    (looking-back ivy-regex (line-beginning-position)))
           (goto-char (match-beginning 0)))
-        (isearch-range-invisible (point) (1+ (point)))
+        (funcall isearch-filter-predicate (point) (1+ (point)))
         (swiper--maybe-recenter)
         (if (eq ivy-exit 'done)
             (progn

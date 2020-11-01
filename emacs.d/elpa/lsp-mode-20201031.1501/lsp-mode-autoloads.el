@@ -491,6 +491,13 @@ mode otherwise.
 
 ;;;***
 
+;;;### (autoloads nil "lsp-vala" "lsp-vala.el" (0 0 0 0))
+;;; Generated autoloads from lsp-vala.el
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-vala" '("lsp-clients-vala-ls-executable")))
+
+;;;***
+
 ;;;### (autoloads nil "lsp-verilog" "lsp-verilog.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-verilog.el
 

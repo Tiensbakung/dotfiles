@@ -782,7 +782,7 @@ returns a negative number, 0, or a positive number indicating
 whether the first parameter is less than, equal to, or greater
 than the second parameter.")
 
-(defcustom lsp-diagnostic-clean-after-change t
+(defcustom lsp-diagnostic-clean-after-change nil
   "When non-nil, clean the diagnostics on change.
 
 Note that when that setting is nil, `lsp-mode' will show stale
@@ -4302,20 +4302,16 @@ Applies on type formatting."
   (let ((ch last-command-event))
     (when (or (eq (string-to-char first-trigger-characters) ch)
               (cl-find ch more-trigger-characters :key #'string-to-char))
-      (-let [(callback cleanup-fn) (lsp--create-apply-text-edits-handlers)]
-        (lsp-request-async "textDocument/onTypeFormatting"
-                           (lsp-merge (lsp-make-document-on-type-formatting-params
-                                       :ch (char-to-string ch)
-                                       :position (lsp--cur-position))
-                                      (lsp--make-document-formatting-params))
-                           (lambda (text-edits)
-                             (funcall callback text-edits)
-                             (funcall cleanup-fn))
-                           :error-handler (lambda (err)
-                                            (funcall cleanup-fn)
-                                            (error (lsp:json-error-message err)))
-                           :cancel-handler cleanup-fn
-                           :mode 'tick)))))
+      (lsp-request-async "textDocument/onTypeFormatting"
+                         (lsp-make-document-on-type-formatting-params
+                          :text-document (lsp--text-document-identifier)
+                          :options (lsp-make-formatting-options
+                                    :tab-size (symbol-value (lsp--get-indent-width major-mode))
+                                    :insert-spaces (if indent-tabs-mode :json-false t))
+                          :ch (char-to-string ch)
+                          :position (lsp--cur-position))
+                         #'lsp--apply-text-edits
+                         :mode 'tick))))
 
 
 ;; links
@@ -6190,16 +6186,41 @@ information, for example if it doesn't support DocumentSymbols."
   :group 'lsp-imenu
   :type 'boolean)
 
+(defface lsp-details-face '((t :height 0.8 :inherit shadow))
+  "Used to display additional information troughout `lsp'.
+Things like line numbers, signatures, ... are considered
+additional information. Often, additional faces are defined that
+inherit from this face by default, like `lsp-signature-face', and
+they may be customized for finer control."
+  :group 'lsp-faces)
+
+(defface lsp-signature-face '((t :inherit lsp-details-face))
+  "Used to display signatures in `imenu', ...."
+  :group 'lsp-faces)
+
 (lsp-defun lsp-render-symbol ((&DocumentSymbol :name :detail? :deprecated?)
                               show-detail?)
   "Render INPUT0, an `&DocumentSymbol', to a string.
 If SHOW-DETAIL? is set, make use of its `:detail?' field (often
 the signature)."
-  (let ((base (or (and show-detail? detail?) detail? name)))
-    (if deprecated? (propertize base 'face 'lsp-face-semhl-deprecated)
-      base)))
+  (let ((detail (and show-detail? (s-present? detail?)
+                     (propertize (concat " " (s-trim-left detail?))
+                                 'face 'lsp-signature-face)))
+        (name (if deprecated?
+                  (propertize name 'face 'lsp-face-semhl-deprecated) name)))
+    (concat name detail)))
 
-(lsp-defun lsp--symbol-to-imenu-elem ((sym &as &SymbolInformation :name :container-name?))
+(lsp-defun lsp-render-symbol-information ((&SymbolInformation :name :deprecated? :container-name?)
+                                          separator)
+  "Render a piece of SymbolInformation.
+Handle :deprecated?. If SEPARATOR is non-nil, the
+symbol's (optional) parent, SEPARATOR and the symbol itself are
+concatenated."
+  (when (and separator container-name? (not (string-empty-p container-name?)))
+    (setq name (concat name separator container-name?)))
+  (if deprecated? (propertize name 'face 'lsp-face-semhl-deprecated) name))
+
+(defun lsp--symbol-to-imenu-elem (sym)
   "Convert SYM to imenu element.
 
 SYM is a SymbolInformation message.
@@ -6207,9 +6228,9 @@ SYM is a SymbolInformation message.
 Return a cons cell (full-name . start-point)."
   (let ((start-point (ht-get lsp--line-col-to-point-hash-table
                              (lsp--get-line-and-col sym))))
-    (cons (if (and lsp-imenu-show-container-name container-name?)
-              (concat container-name? lsp-imenu-container-name-separator name)
-            name)
+    (cons (lsp-render-symbol-information
+           sym (and lsp-imenu-show-container-name
+                    lsp-imenu-container-name-separator))
           start-point)))
 
 (lsp-defun lsp--symbol-to-hierarchical-imenu-elem ((sym &as &DocumentSymbol :children?))

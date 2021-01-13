@@ -125,6 +125,8 @@
 ;; (add-hook 'go-mode-hook #'lsp)
 (setq lsp-modeline-code-actions-mode t)
 (setq lsp-headerline-breadcrumb-enable 1)
+(setq lsp-ui-sideline-update-mode 'point)
+(global-set-key (kbd "C-c l a") 'lsp-execute-code-action)
 
 ;; company mode
 (require 'company)

@@ -788,8 +788,8 @@ directory")
                       (with-lsp-workspace workspace
                         (lsp:rename-options-prepare-provider?
                          (or (lsp--capability :renameProvider)
-                             (lsp--registered-capability-options (lsp--registered-capability "textDocument/rename")))))))
-
+                             (when-let ((maybe-capability (lsp--registered-capability "textDocument/rename")))
+                               (lsp--registered-capability-options maybe-capability)))))))
     ("textDocument/rangeFormatting" :capability :documentRangeFormattingProvider)
     ("textDocument/references" :capability :referencesProvider)
     ("textDocument/rename" :capability :renameProvider)
@@ -3407,9 +3407,14 @@ in that particular folder."
     (cl-first (read-from-string (f-read-text file 'utf-8)))))
 
 (defun lsp--persist (file-name to-persist)
-  "Persist TO-PERSIST in FILE-NAME."
+  "Persist TO-PERSIST in FILE-NAME.
+
+This function creates the parent directories if they don't exist
+yet."
   (let ((print-length nil)
         (print-level nil))
+    ;; Create all parent directories:
+    (apply #'f-mkdir (f-split (f-parent file-name)))
     (f-write-text (prin1-to-string to-persist) 'utf-8 file-name)))
 
 (defun lsp-workspace-folders-add (project-root)
@@ -5413,17 +5418,14 @@ perform the request synchronously."
 (defun lsp--xref-elements-index (symbols path)
   (-mapcat
    (-lambda (sym)
-     (cond
-      ((lsp-document-symbol? sym)
-       (-let [(&DocumentSymbol :name :children? :selection-range (&RangeToPoint :start))
-              sym]
-         (cons (cons (concat path name) start)
-               (lsp--xref-elements-index children? (concat path name " / ")))))
-      (t
-       (-let [(&SymbolInformation :name :location (&RangeToPoint :start)) sym]
-         (cons (cons (concat path name)
-                     (lsp--position-to-point start))
-               (lsp--xref-elements-index nil (concat path name " / ")))))))
+     (pcase sym
+       ((DocumentSymbol :name :children? :selection-range (Range :start))
+        (cons (cons (concat path name)
+                    (lsp--position-to-point start))
+              (lsp--xref-elements-index children? (concat path name " / "))))
+       ((SymbolInformation :name :location (Location :range (Range :start)))
+        (list (cons (concat path name)
+                    (lsp--position-to-point start))))))
    symbols))
 
 (defvar-local lsp--symbols-cache nil)
@@ -5730,6 +5732,7 @@ textDocument/didOpen for the new file."
 (defconst lsp--default-notification-handlers
   (ht ("window/showMessage" #'lsp--window-show-message)
       ("window/logMessage" #'lsp--window-log-message)
+      ("workspace/semanticTokens/refresh" #'ignore)
       ("textDocument/publishDiagnostics" #'lsp--on-diagnostics)
       ("textDocument/diagnosticsEnd" #'ignore)
       ("textDocument/diagnosticsBegin" #'ignore)

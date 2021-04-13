@@ -80,7 +80,7 @@ toggle it if ARG is `toggle'; disable the mode otherwise.
 
 (add-hook 'lsp-configure-hook (lambda nil (when (and lsp-auto-configure lsp-completion-enable) (lsp-completion--enable))))
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-completion" '("lsp-completion-")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-completion" '("lsp-")))
 
 ;;;***
 
@@ -170,7 +170,7 @@ toggle it if ARG is `toggle'; disable the mode otherwise.
 ;;;### (autoloads nil "lsp-elixir" "lsp-elixir.el" (0 0 0 0))
 ;;; Generated autoloads from lsp-elixir.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-elixir" '("lsp-")))
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "lsp-elixir" '("lsp-elixir-")))
 
 ;;;***
 

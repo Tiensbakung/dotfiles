@@ -1,0 +1,41 @@
+#!/bin/bash
+distro=`lsb_release -si`
+if [ $distro == "ManjaroLinux" ]; then
+    echo "Manjaro Linux detected."
+elif [ $distro == "Arch" ]; then
+    echo "Arch Linux detected."
+elif [ $distro == "Debian" ]; then
+    echo "Debian Linux detected."
+elif [ $distro == "LinuxMint" ]; then
+    echo "Linux Mint detected."
+elif [ $distro == "Ubuntu" ]; then
+    echo "Ubuntu Linux detected."
+elif [ $distro == "SolydXK" ]; then
+    echo "SolydXK Linux detected."
+else
+    echo "Unknown Operating System."
+    exit 0
+fi
+
+cd ~
+if ! grep -Gq "dotfiles/bashrc " ~/.bashrc; then
+    echo "if [ -f ~/.dotfiles/bashrc ]; then">> .bashrc
+    echo ". ~/.dotfiles/bashrc" >> .bashrc
+    echo "fi" >> .bashrc
+    echo "sourced bashrc file."
+fi
+
+if ! grep -Gq "dotfiles/zshrc" ~/.zshrc; then
+    echo 'test -f ~/.dotfiles/zshrc && source ~/.dotfiles/zshrc' >> .zshrc
+    echo 'sourced zshrc file.'
+fi
+
+if [ ! -e .emacs.d ]; then
+    ln -fs .dotfiles/emacs.d .emacs.d
+    echo "symlinked emacs.d"
+fi
+
+if [ ! -e .vimrc ]; then
+    ln -fs .dotfiles/vimrc .vimrc
+    echo "symlinked vimrc"
+fi

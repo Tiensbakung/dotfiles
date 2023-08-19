@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: demo array data
+# key: darr
+# --
+${1:items}: [
+  { id: "219342342", name: "Jack Anderson", desc: "A blessing in disguise", num: 32 },
+  { id: "329412949", name: "John Smith", desc: "A dime a dozen", num: 24 },
+  { id: "239412349", name: "Jennifer Lee", desc: "Beat around the bush", num: 23 },
+  { id: "048101324", name: "Robert Jackson", desc: "Hang in there", num: 58 },
+  { id: "023429387", name: "Lisa Turner", desc: "Bite the bullet", num: 17 },
+  { id: "974219741", name: "Helen Clark", desc: "Break a leg", num: 29 },
+  { id: "293471234", name: "Thomas Young", desc: "Call it a day", num: 43 },
+  { id: "329412394", name: "Daniel White", desc: "Go back to the drawing board", num: 64 },
+],$0

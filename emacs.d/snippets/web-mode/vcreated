@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: created() {}
+# key: vcreated
+# --
+created() {
+  $0
+},

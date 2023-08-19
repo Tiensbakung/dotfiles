@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: methods: {}
+# key: vmethod
+# --
+methods: {
+  $0
+},

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: watch: {}
+# key: vwatch
+# --
+watch: {
+  $1(newVal) {
+    $0
+  },
+}

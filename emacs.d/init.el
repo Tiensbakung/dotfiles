@@ -356,6 +356,9 @@
 (define-derived-mode vue-mode web-mode "Vue")
 (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(defun my-web-mode-setup ()
+  (setq tab-width 2))
+(add-hook 'web-mode-hook 'my-web-mode-setup)
 
 (defun vue-eglot-init-options ()
   (let ((serverPath

@@ -341,7 +341,7 @@
         (yaml-mode . yaml-ts-mode)
         (bash-mode . bash-ts-mode)
         (typescript-mode . typescript-ts-mode)
-        (js2-mode . js-ts-mode)
+        (js-mode . js-ts-mode)
         (json-mode . json-ts-mode)
         (css-mode . css-ts-mode)
         (java-mode . java-ts-mode)
@@ -356,6 +356,9 @@
 (define-derived-mode vue-mode web-mode "Vue")
 (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
 (defun my-web-mode-setup ()
   (setq tab-width 2))
 (add-hook 'web-mode-hook 'my-web-mode-setup)
@@ -378,8 +381,6 @@
              :documentFeatures (:documentFormatting
                                 (:defaultPrintWidth
                                  100 :getDocumentPrintWidthRequest nil)
-                                :defaultIndentSize 2
-                                :defaultIndentWidth 2
                                 :documentSymbol t
                                 :documentColor t)))))
 ;; Volar

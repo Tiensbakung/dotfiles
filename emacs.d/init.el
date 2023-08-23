@@ -58,7 +58,7 @@
 (put 'upcase-region 'disabled nil)
 (setq image-use-external-converter t)
 
-(set-frame-font "Noto Sans Mono-12" nil t)
+(set-frame-font "Fira Code-13" nil t)
 
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev

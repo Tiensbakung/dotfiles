@@ -359,6 +359,7 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.geojson\\'" . json-ts-mode))
 (defun my-web-mode-setup ()
   (setq tab-width 2))
 (add-hook 'web-mode-hook 'my-web-mode-setup)

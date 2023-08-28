@@ -114,7 +114,7 @@
 (setq js-indent-level 2)
 
 (require 'iedit)
-(global-set-key (kbd "C-\"") 'iedit-mode)
+;; (global-set-key (kbd "C-\"") 'iedit-mode)
 (setq dash-docs-browser-func 'eww)
 
 (require 'yasnippet)
@@ -298,7 +298,7 @@
   :ensure t
   :bind
   (("C-." . embark-act)         ;; pick some comfortable binding
-   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ;; ("C-;" . embark-dwim)        ;; good alternative: M-.
    ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
 
   :init

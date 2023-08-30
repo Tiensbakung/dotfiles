@@ -58,6 +58,8 @@
 (put 'upcase-region 'disabled nil)
 (setq image-use-external-converter t)
 
+(load-theme 'wheatgrass)
+(set-frame-parameter nil 'alpha-background 65)
 (set-frame-font "Fira Code-13" nil t)
 
 (setq hippie-expand-try-functions-list

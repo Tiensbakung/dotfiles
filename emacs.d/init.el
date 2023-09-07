@@ -59,7 +59,7 @@
 (setq image-use-external-converter t)
 
 (load-theme 'tango-dark)
-(set-frame-parameter nil 'alpha-background 65)
+(set-frame-parameter nil 'alpha-background 75)
 (set-frame-font "Fira Code-13" nil t)
 
 (setq hippie-expand-try-functions-list

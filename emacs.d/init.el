@@ -365,6 +365,8 @@
 (defun my-web-mode-setup ()
   (setq tab-width 2))
 (add-hook 'web-mode-hook 'my-web-mode-setup)
+(add-hook 'js-ts-mode-hook 'my-web-mode-setup)
+(add-hook 'css-ts-mode-hook 'my-web-mode-setup)
 
 (defun vue-eglot-init-options ()
   (let ((serverPath

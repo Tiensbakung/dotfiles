@@ -381,9 +381,12 @@
 (add-to-list 'auto-mode-alist '("\\.geojson\\'" . json-ts-mode))
 (defun my-web-mode-setup ()
   (setq tab-width 2))
+(defun my-python-setup ()
+  (setq tab-width 4))
 (add-hook 'web-mode-hook 'my-web-mode-setup)
 (add-hook 'js-ts-mode-hook 'my-web-mode-setup)
 (add-hook 'css-ts-mode-hook 'my-web-mode-setup)
+(add-hook 'python-ts-mode-hook 'my-python-setup)
 
 (defun vue-eglot-init-options ()
   (let ((serverPath

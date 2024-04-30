@@ -32,3 +32,4 @@ emacs.d/history
 emacs.d/transient/
 emacs.d/.dap-breakpoints
 emacs.d/multisession
+emacs.d/tree-sitter

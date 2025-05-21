@@ -58,7 +58,7 @@
 (put 'upcase-region 'disabled nil)
 (setq image-use-external-converter t)
 
-(load-theme 'tango-dark)
+(load-theme 'modus-operandi-deuteranopia)
 (set-frame-parameter nil 'alpha-background 75)
 (set-frame-font "Fira Code-13" nil t)
 
@@ -376,9 +376,12 @@
 (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-mode))
 (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
 (add-to-list 'auto-mode-alist '("\\.geojson\\'" . json-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.prisma\\'" . prisma-ts-mode))
 (defun my-web-mode-setup ()
   (setq tab-width 2))
 (defun my-python-setup ()
@@ -387,6 +390,8 @@
 (add-hook 'js-ts-mode-hook 'my-web-mode-setup)
 (add-hook 'css-ts-mode-hook 'my-web-mode-setup)
 (add-hook 'python-ts-mode-hook 'my-python-setup)
+(add-hook 'tsx-ts-mode-hook 'my-web-mode-setup)
+(add-hook 'typescript-ts-mode-hook 'my-web-mode-setup)
 
 (defun vue-eglot-init-options ()
   (let ((serverPath
@@ -413,10 +418,10 @@
              `(vue-mode . ("vue-language-server" "--stdio"
                            :initializationOptions
                            ,(vue-eglot-init-options))))
-(add-to-list 'eglot-server-programs
-             `(typescript-ts-mode . ("vue-language-server" "--stdio"
-                                     :initializationOptions
-                                     ,(vue-eglot-init-options))))
+;; (add-to-list 'eglot-server-programs
+;;              `(typescript-ts-mode . ("vue-language-server" "--stdio"
+;;                                      :initializationOptions
+;;                                      ,(vue-eglot-init-options))))
 (global-set-key (kbd "C-c l f") 'eglot-format)
 (global-set-key (kbd "C-c l a") 'eglot-code-actions)
 (global-set-key (kbd "C-c l r") 'eglot-rename)
@@ -495,7 +500,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(eglot eldoc orderless yasnippet-snippets web-mode w3m vertico ox-reveal org-tree-slide marginalia magit iedit embark-consult diminish dash-docs avy)))
+   '(avy dash-docs diminish eglot eldoc embark-consult iedit magit marginalia
+         orderless org-tree-slide ox-reveal prisma-ts-mode vertico w3m web-mode
+         yasnippet-snippets)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -130,6 +130,9 @@
 (global-set-key (kbd "M-o") 'ace-window)
 
 (require 'project)
+(use-package project
+  :init
+  (setq project-vc-extra-root-markers '("requirements.txt")))
 (use-package vertico
   :init
   (vertico-mode)
